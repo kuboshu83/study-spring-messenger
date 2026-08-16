@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>受信者トップページ</title>
+</head>
+<body>
+<div><a th:href="@{/}">トップページ</a></div>
+<div><a th:href="@{/recipients/create}">新規の受信者登録</a></div>
+<h1>登録受信者一覧</h1>
+<div th:each="recipient: ${recipients}">
+    <div>
+        <div>
+            <a th:href="@{/recipients/{id}(id=${recipient.id.value})}">
+                名前: <span th:text="${recipient.name.value}">name</span>
+                メールアドレス: <span th:text="${recipient.email.value}">email-address</span>
+                ロック: <span th:text="${recipient.locked}">locked</span>
+            </a>
+        </div>
+        <form method="post" th:action="@{/recipients/{id}/delete(id=${recipient.id.value})}">
+            <input type="submit" value="削除">
+        </form>
+    </div>
+</div>
+</body>
+</html>

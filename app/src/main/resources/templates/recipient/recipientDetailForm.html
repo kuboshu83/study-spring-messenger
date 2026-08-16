@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>受信者情報</title>
+</head>
+<body>
+<div><a th:href="@{/recipients}">受信者トップページ</a></div>
+<h1>受信者情報</h1>
+<form method="post" th:action="@{/recipients/{id}/update(id=${recipient.id.value})}">
+    <label for="name">名前:</label>
+    <input type="text" id="name" name="name" th:value="${recipient.name.value}"/>
+
+    <label for="email">メールアドレス:</label>
+    <input type="text" id="email" name="email" th:value="${recipient.email.value}"/>
+
+    <label>ロック状況:</label>
+    <input type="radio" id="locked-true" name="locked" value="true" th:checked="${recipient.locked}">
+    <label for="locked-true">locked</label>
+    <input type="radio" id="locked-false" name="locked" value="false" th:checked="${!recipient.locked}">
+    <label for="locked-false">unlocked</label>
+
+    <input type="submit" value="更新">
+</form>
+</body>
+</html>
