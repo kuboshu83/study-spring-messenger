@@ -1,0 +1,37 @@
+services:
+  db:
+    image: postgres:18.3
+    container_name: postgresql
+    hostname: postgresql-server
+    environment:
+      - POSTGRES_USER=messenger
+      - POSTGRES_PASSWORD=change-me
+      - POSTGRES_DB=messenger
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql
+    networks:
+      - dev-nw
+
+  mq:
+    image: rabbitmq:4.3.1-management
+    container_name: rabbitmq
+    hostname: rabbitmq-server
+    environment:
+      - RABBITMQ_DEFAULT_USER=messenger
+      - RABBITMQ_DEFAULT_PASS=change-me
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    volumes:
+      - mq-data:/var/lib/rabbitmq
+    networks:
+      - dev-nw
+
+volumes:
+  db-data:
+  mq-data:
+
+networks:
+  dev-nw:

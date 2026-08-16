@@ -9,8 +9,9 @@ plugins {
     // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
     alias(libs.plugins.kotlin.jvm)
 
-    // Apply the application plugin to add support for building a CLI application in Java.
-    application
+    kotlin("plugin.spring") version "2.2.21"
+    id("org.springframework.boot") version "4.0.7"
+    id("io.spring.dependency-management") version "1.1.7"
 }
 
 repositories {
@@ -29,6 +30,28 @@ dependencies {
 
     // This dependency is used by the application.
     implementation(libs.guava)
+
+    // Spring
+    implementation("org.springframework.boot:spring-boot-starter")
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+
+    // DB
+    implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:4.0.1")
+    runtimeOnly("org.postgresql:postgresql")
+    testImplementation("org.mybatis.spring.boot:mybatis-spring-boot-starter-test:4.0.1")
+
+    // Web Thymeleaf
+    implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
+    implementation("org.springframework.boot:spring-boot-starter-webmvc")
+    implementation("tools.jackson.module:jackson-module-kotlin")
+    testImplementation("org.springframework.boot:spring-boot-starter-thymeleaf-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
+
+    // Flyway
+    implementation("org.springframework.boot:spring-boot-starter-flyway")
+    implementation("org.flywaydb:flyway-database-postgresql")
+    testImplementation("org.springframework.boot:spring-boot-starter-flyway-test")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
@@ -36,11 +59,6 @@ java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
     }
-}
-
-application {
-    // Define the main class for the application.
-    mainClass = "org.example.AppKt"
 }
 
 tasks.named<Test>("test") {
