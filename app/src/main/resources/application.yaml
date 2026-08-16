@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/messenger
+    username: messenger
+    password: change-me
+    driver-class-name: org.postgresql.Driver
+
+  flyway:
+    locations: classpath:/db/migrations
+
+mybatis:
+  mapper-locations: classpath:/mapper/*.xml
+  configuration:
+    defaultStatementTimeout: 1
