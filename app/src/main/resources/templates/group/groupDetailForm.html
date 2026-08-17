@@ -22,6 +22,11 @@
     <input type="radio" id="locked-false" name="locked" value="false" th:checked="${!group.locked}">
     <label for="locked-false">unlocked</label>
 
+    <div>
+        <div>登録済み受信者一覧</div>
+        <ul id="registered-recipient-list"></ul>
+    </div>
+
     <input type="submit" value="更新">
 </form>
 
@@ -30,16 +35,94 @@
     <li><span th:text="${member.name.value}">name</span>(<span th:text="${member.email.value}">email</span>)</li>
 </ul>
 
-<h1>受信者検索</h1>
-<form method="get" th:action="@{/groups/{id}(id=${group.id.value})}">
-    <label for="searchName">検索(名前):</label>
-    <input id="searchName" name="searchName" type="text"/><br>
+<h1>受信者検索(Javascriptバージョン)</h1>
+<div>
+    <form id="search-recipient-form">
+        <label for="search-name">検索(名前):</label>
+        <input id="search-name" name="searchName" type="text"/><br>
+        <input type="button" onclick="searchRecipient()" value="検索">
+    </form>
+    <ul id="search-recipient-results"></ul>
+</div>
 
-    <input type="submit" value="検索">
-</form>
-<ul th:each="recipient: ${searchResult}">
-    <li><span th:text="${recipient.name.value}">name</span>(<span th:text="${recipient.email.value}">email</span>)</li>
-</ul>
 
+<script th:inline="javascript">
+    const baseUrl = /*[[@{/api/recipients}]]*/'';
+    const registeredRecipients = new Map((/*[[${registeredRecipients}]]*/[]).map(recipient => [recipient.id, recipient]));
+    console.log(registeredRecipients);
+
+    const searchRecipientForm = document.getElementById("search-recipient-form");
+    searchRecipientForm.addEventListener("submit", event => {
+        event.preventDefault();
+        searchRecipient();
+    })
+
+    function searchRecipient() {
+        const formData = new FormData(searchRecipientForm)
+        const searchName = formData.get("searchName");
+        const url = searchName === "" ? baseUrl : `${baseUrl}?name=${searchName}`
+        fetch(url).then(res => {
+            if (res.ok) {
+                return res.json();
+            }
+            throw new Error(`search recipient error: ${res.status}`);
+        }).then(recipients => {
+            renderSearchRecipientResult(recipients);
+        }).catch(error => {
+            console.error(error);
+        });
+    }
+
+    function renderSearchRecipientResult(recipients) {
+        const list = document.getElementById("search-recipient-results");
+        list.replaceChildren();
+        recipients.forEach(recipient => {
+            const li = document.createElement("li");
+
+            const name = document.createElement("span");
+            name.textContent = recipient.name;
+
+            const button = document.createElement("button");
+            button.type = "button";
+            button.textContent = "追加";
+            button.addEventListener("click", () => {
+                if (!registeredRecipients.has(recipient.id)) {
+                    registeredRecipients.set(recipient.id, recipient);
+                    renderRegisteredRecipient();
+                }
+            });
+
+            li.appendChild(name);
+            li.appendChild(button);
+            list.appendChild(li);
+        });
+    }
+
+    function renderRegisteredRecipient() {
+        const list = document.getElementById("registered-recipient-list");
+        list.replaceChildren();
+        registeredRecipients.forEach(recipient => {
+            const li = document.createElement("li");
+
+            const name = document.createElement("span");
+            name.textContent = `${recipient.name}(${recipient.email})`;
+
+            const button = document.createElement("button");
+            button.type = "button";
+            button.textContent = "解除";
+            button.addEventListener("click", () => {
+                if (registeredRecipients.has(recipient.id)) {
+                    registeredRecipients.delete(recipient.id);
+                    renderRegisteredRecipient();
+                }
+            });
+
+            li.appendChild(name);
+            li.appendChild(button);
+            list.appendChild(li);
+        });
+    }
+
+</script>
 </body>
 </html>
