@@ -21,6 +21,17 @@ class RecipientSearchService(private val recipientQuery: RecipientQuery) {
             ?: throw DataNotFoundException("specified recipient not found: id=${recipientId.value}")
         return recipient
     }
+
+    fun findRecipientsByRecipientIds(recipientIds: Set<RecipientId>): List<Recipient> {
+        if (recipientIds.isEmpty()) {
+            throw IllegalStateException("no search keyword(recipient id) is specified")
+        }
+        return recipientQuery.findRecipientsByRecipientIds(recipientIds)
+    }
+
+    fun fuzzyFindRecipientsByRecipientName(recipientName: RecipientName): List<Recipient> {
+        return recipientQuery.fuzzyFindRecipientsByRecipientName(recipientName)
+    }
 }
 
 @Service

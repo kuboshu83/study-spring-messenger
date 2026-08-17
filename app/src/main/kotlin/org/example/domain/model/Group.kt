@@ -46,6 +46,10 @@ class UniqueMembers(val members: Set<RecipientId>) {
         }
     }
 
+    fun isEmpty(): Boolean {
+        return members.isEmpty()
+    }
+
     // リストを受け取る場合の方が多そうなのでリスト型のコンストラクタを用意した
     constructor(recipients: List<RecipientId>) : this(recipients.toSet())
 
@@ -81,6 +85,10 @@ class Group(
 
     constructor(id: GroupId, name: GroupName, locked: Boolean, description: Description)
             : this(id, name, locked, UniqueMembers.empty(), description)
+
+    fun isEmpty(): Boolean {
+        return members.isEmpty()
+    }
 
     fun addMember(recipientId: RecipientId): Group {
         val updatedMembers = members.add(recipientId)

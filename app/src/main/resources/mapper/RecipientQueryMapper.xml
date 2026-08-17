@@ -12,4 +12,16 @@
     <select id="findByEmail" resultType="org.example.infrastructure.repository.RecipientDTO">
         SELECT id, name, email, locked FROM recipients WHERE email=#{email}
     </select>
+
+    <select id="findRecipientsByRecipientIds" resultType="org.example.infrastructure.repository.RecipientDTO">
+        SELECT id, name, email, locked FROM recipients
+        WHERE id IN
+        <foreach collection="recipientIds" item="recipientId" separator="," open="(" close=")">
+            #{recipientId}
+        </foreach>
+    </select>
+
+    <select id="fuzzyFindRecipientsByRecipientName" resultType="org.example.infrastructure.repository.RecipientDTO">
+        SELECT id, name, email, locked FROM recipients WHERE name LIKE CONCAT('%', #{recipientName}, '%')
+    </select>
 </mapper>

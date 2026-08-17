@@ -1,19 +1,10 @@
 package org.example.web.group
 
-import org.example.domain.model.Description
-import org.example.domain.model.Group
-import org.example.domain.model.GroupId
-import org.example.domain.model.GroupName
-import org.example.domain.service.GroupCreateService
-import org.example.domain.service.GroupDeleteService
-import org.example.domain.service.GroupSearchService
-import org.example.domain.service.GroupUpdateService
+import org.example.domain.model.*
+import org.example.domain.service.*
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.*
 
 @Controller
 @RequestMapping("/groups")
@@ -22,6 +13,7 @@ class GroupController(
     private val groupCreateService: GroupCreateService,
     private val groupDeleteService: GroupDeleteService,
     private val groupUpdateService: GroupUpdateService,
+    private val recipientSearchService: RecipientSearchService
 ) {
     companion object {
         private const val REDIRECT_TO_GROUP_TOP = "redirect:/groups"
@@ -46,9 +38,25 @@ class GroupController(
     }
 
     @GetMapping("/{id}")
-    fun showGroupDetailInformation(@PathVariable("id") groupId: String, form: UpdateGroupForm, model: Model): String {
+    fun showGroupDetailInformation(
+        @PathVariable("id") groupId: String,
+        form: UpdateGroupForm,
+        @RequestParam(name = "searchName", required = false, defaultValue = "") searchName: String,
+        model: Model
+    ): String {
         val group = groupSearchService.findByGroupId(GroupId.fromString(groupId))
         model.addAttribute("group", group)
+
+        if (!group.isEmpty()) {
+            val recipients = recipientSearchService.findRecipientsByRecipientIds(group.members.members)
+            model.addAttribute("members", recipients)
+        }
+
+        if (searchName != "") {
+            val foundRecipients = recipientSearchService.fuzzyFindRecipientsByRecipientName(RecipientName(searchName))
+            model.addAttribute("searchResult", foundRecipients)
+        }
+
         return "group/groupDetailForm"
     }
 

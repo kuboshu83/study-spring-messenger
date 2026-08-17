@@ -24,5 +24,22 @@
 
     <input type="submit" value="更新">
 </form>
+
+<h1>登録済み受信者一覧</h1>
+<ul th:each="member: ${members}">
+    <li><span th:text="${member.name.value}">name</span>(<span th:text="${member.email.value}">email</span>)</li>
+</ul>
+
+<h1>受信者検索</h1>
+<form method="get" th:action="@{/groups/{id}(id=${group.id.value})}">
+    <label for="searchName">検索(名前):</label>
+    <input id="searchName" name="searchName" type="text"/><br>
+
+    <input type="submit" value="検索">
+</form>
+<ul th:each="recipient: ${searchResult}">
+    <li><span th:text="${recipient.name.value}">name</span>(<span th:text="${recipient.email.value}">email</span>)</li>
+</ul>
+
 </body>
 </html>
