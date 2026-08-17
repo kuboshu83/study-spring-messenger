@@ -52,10 +52,12 @@ class GroupController(
         val group = groupSearchService.findByGroupId(GroupId.fromString(groupId))
         model.addAttribute("group", group)
 
-        if (!group.isEmpty()) {
-            val recipients = recipientSearchService.findRecipientsByRecipientIds(group.members.members)
-            model.addAttribute("members", recipients)
+        val registeredRecipients = if (group.isEmpty()) {
+            emptyList()
+        } else {
+            recipientSearchService.findRecipientsByRecipientIds(group.members.members)
         }
+        model.addAttribute("registeredRecipients", registeredRecipients)
 
         return "group/groupDetailForm"
     }

@@ -22,6 +22,11 @@
     <input type="radio" id="locked-false" name="locked" value="false" th:checked="${!group.locked}">
     <label for="locked-false">unlocked</label>
 
+    <div>
+        <div>登録済み受信者一覧</div>
+        <ul id="registered-recipient-list"></ul>
+    </div>
+
     <input type="submit" value="更新">
 </form>
 
@@ -43,6 +48,8 @@
 
 <script th:inline="javascript">
     const baseUrl = /*[[@{/api/recipients}]]*/'';
+    const registeredRecipients = new Map((/*[[${registeredRecipients}]]*/[]).map(recipient => [recipient.id, recipient]));
+    console.log(registeredRecipients);
 
     const searchRecipientForm = document.getElementById("search-recipient-form");
     searchRecipientForm.addEventListener("submit", event => {
@@ -60,17 +67,62 @@
             }
             throw new Error(`search recipient error: ${res.status}`);
         }).then(recipients => {
-            const list = document.getElementById("search-recipient-results");
-            list.replaceChildren();
-            recipients.forEach(recipient => {
-                const li = document.createElement("li");
-                li.textContent = recipient.name;
-                list.appendChild(li);
-            })
+            renderSearchRecipientResult(recipients);
         }).catch(error => {
             console.error(error);
-        })
+        });
     }
+
+    function renderSearchRecipientResult(recipients) {
+        const list = document.getElementById("search-recipient-results");
+        list.replaceChildren();
+        recipients.forEach(recipient => {
+            const li = document.createElement("li");
+
+            const name = document.createElement("span");
+            name.textContent = recipient.name;
+
+            const button = document.createElement("button");
+            button.type = "button";
+            button.textContent = "追加";
+            button.addEventListener("click", () => {
+                if (!registeredRecipients.has(recipient.id)) {
+                    registeredRecipients.set(recipient.id, recipient);
+                    renderRegisteredRecipient();
+                }
+            });
+
+            li.appendChild(name);
+            li.appendChild(button);
+            list.appendChild(li);
+        });
+    }
+
+    function renderRegisteredRecipient() {
+        const list = document.getElementById("registered-recipient-list");
+        list.replaceChildren();
+        registeredRecipients.forEach(recipient => {
+            const li = document.createElement("li");
+
+            const name = document.createElement("span");
+            name.textContent = `${recipient.name}(${recipient.email})`;
+
+            const button = document.createElement("button");
+            button.type = "button";
+            button.textContent = "解除";
+            button.addEventListener("click", () => {
+                if (registeredRecipients.has(recipient.id)) {
+                    registeredRecipients.delete(recipient.id);
+                    renderRegisteredRecipient();
+                }
+            });
+
+            li.appendChild(name);
+            li.appendChild(button);
+            list.appendChild(li);
+        });
+    }
+
 </script>
 </body>
 </html>
