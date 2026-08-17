@@ -30,16 +30,47 @@
     <li><span th:text="${member.name.value}">name</span>(<span th:text="${member.email.value}">email</span>)</li>
 </ul>
 
-<h1>受信者検索</h1>
-<form method="get" th:action="@{/groups/{id}(id=${group.id.value})}">
-    <label for="searchName">検索(名前):</label>
-    <input id="searchName" name="searchName" type="text"/><br>
+<h1>受信者検索(Javascriptバージョン)</h1>
+<div>
+    <form id="search-recipient-form">
+        <label for="search-name">検索(名前):</label>
+        <input id="search-name" name="searchName" type="text"/><br>
+        <input type="button" onclick="searchRecipient()" value="検索">
+    </form>
+    <ul id="search-recipient-results"></ul>
+</div>
 
-    <input type="submit" value="検索">
-</form>
-<ul th:each="recipient: ${searchResult}">
-    <li><span th:text="${recipient.name.value}">name</span>(<span th:text="${recipient.email.value}">email</span>)</li>
-</ul>
 
+<script th:inline="javascript">
+    const baseUrl = /*[[@{/api/recipients}]]*/'';
+
+    const searchRecipientForm = document.getElementById("search-recipient-form");
+    searchRecipientForm.addEventListener("submit", event => {
+        event.preventDefault();
+        searchRecipient();
+    })
+
+    function searchRecipient() {
+        const formData = new FormData(searchRecipientForm)
+        const searchName = formData.get("searchName");
+        const url = searchName === "" ? baseUrl : `${baseUrl}?name=${searchName}`
+        fetch(url).then(res => {
+            if (res.ok) {
+                return res.json();
+            }
+            throw new Error(`search recipient error: ${res.status}`);
+        }).then(recipients => {
+            const list = document.getElementById("search-recipient-results");
+            list.replaceChildren();
+            recipients.forEach(recipient => {
+                const li = document.createElement("li");
+                li.textContent = recipient.name;
+                list.appendChild(li);
+            })
+        }).catch(error => {
+            console.error(error);
+        })
+    }
+</script>
 </body>
 </html>

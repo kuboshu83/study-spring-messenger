@@ -1,10 +1,16 @@
 package org.example.web.group
 
-import org.example.domain.model.*
+import org.example.domain.model.Description
+import org.example.domain.model.Group
+import org.example.domain.model.GroupId
+import org.example.domain.model.GroupName
 import org.example.domain.service.*
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestMapping
 
 @Controller
 @RequestMapping("/groups")
@@ -41,7 +47,6 @@ class GroupController(
     fun showGroupDetailInformation(
         @PathVariable("id") groupId: String,
         form: UpdateGroupForm,
-        @RequestParam(name = "searchName", required = false, defaultValue = "") searchName: String,
         model: Model
     ): String {
         val group = groupSearchService.findByGroupId(GroupId.fromString(groupId))
@@ -50,11 +55,6 @@ class GroupController(
         if (!group.isEmpty()) {
             val recipients = recipientSearchService.findRecipientsByRecipientIds(group.members.members)
             model.addAttribute("members", recipients)
-        }
-
-        if (searchName != "") {
-            val foundRecipients = recipientSearchService.fuzzyFindRecipientsByRecipientName(RecipientName(searchName))
-            model.addAttribute("searchResult", foundRecipients)
         }
 
         return "group/groupDetailForm"
