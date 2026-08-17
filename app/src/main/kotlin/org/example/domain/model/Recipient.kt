@@ -34,6 +34,10 @@ data class RecipientName(val value: String) {
             }
         }
     }
+
+    init {
+        validate(value)
+    }
 }
 
 enum class AllowedRecipientDomain(val value: String) {

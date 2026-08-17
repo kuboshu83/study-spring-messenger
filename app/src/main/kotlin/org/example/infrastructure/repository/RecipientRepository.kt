@@ -38,6 +38,14 @@ class RecipientQueryImpl(private val recipientQueryDAO: RecipientQueryDAO) : Rec
         return recipientQueryDAO.findAll().map { it.toRecipient() }
     }
 
+    override fun findRecipientsByRecipientIds(recipientIds: Set<RecipientId>): List<Recipient> {
+        val dtos = recipientQueryDAO.findRecipientsByRecipientIds(recipientIds.map { it.value })
+        return dtos.map { it.toRecipient() }
+    }
+
+    override fun fuzzyFindRecipientsByRecipientName(recipientName: RecipientName): List<Recipient> {
+        return recipientQueryDAO.fuzzyFindRecipientsByRecipientName(recipientName.value).map { it.toRecipient() }
+    }
 }
 
 data class RecipientDTO(val id: String, val name: String, val email: String, val locked: Boolean) {
@@ -62,6 +70,8 @@ interface RecipientQueryDAO {
     fun findAll(): List<RecipientDTO>
     fun findByRecipientId(recipientId: String): RecipientDTO?
     fun findByEmail(email: String): RecipientDTO?
+    fun findRecipientsByRecipientIds(recipientIds: List<String>): List<RecipientDTO>
+    fun fuzzyFindRecipientsByRecipientName(recipientName: String): List<RecipientDTO>
 }
 
 @Mapper
