@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.infrastructure.repository.GroupMemberShipCommandDAO">
+    <insert id="save" parameterType="java.util.List">
+        INSERT INTO recipients_groups (recipient_id, group_id)
+        VALUES
+        <foreach collection="memberships" item="membership" separator=",">
+            (CAST(#{membership.recipient_id} AS uuid), CAST(#{membership.group_id} AS uuid))
+        </foreach>
+    </insert>
+
+    <delete id="delete" parameterType="java.util.List">
+        DELETE FROM recipients_groups
+        WHERE
+        <foreach collection="memberships" item="membership" separator="OR">
+            (recipient_id=CAST(#{membership.recipient_id} AS uuid) AND group_id=CAST(#{membership.group_id} AS uuid))
+        </foreach>
+    </delete>
+</mapper>

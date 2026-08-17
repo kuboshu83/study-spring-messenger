@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.infrastructure.repository.GroupQueryDAO">
+    <select id="findAll" resultType="org.example.infrastructure.repository.GroupDTO">
+        SELECT
+        A.id,
+        A.name,
+        A.locked,
+        B.recipient_id AS recipientId,
+        A.description
+        FROM groups as A
+        LEFT JOIN recipients_groups AS B
+        ON A.id=B.group_id
+    </select>
+
+    <select id="findGroupByGroupName" resultType="org.example.infrastructure.repository.GroupDTO">
+        SELECT
+        A.id,
+        A.name,
+        A.locked,
+        B.recipient_id AS recipientId,
+        A.description
+        FROM groups as A
+        LEFT JOIN recipients_groups AS B
+        ON A.id=B.group_id
+        WHERE A.name=#{groupName}
+    </select>
+
+    <select id="findGroupByGroupId" resultType="org.example.infrastructure.repository.GroupDTO">
+        SELECT
+        A.id,
+        A.name,
+        A.locked,
+        B.recipient_id AS recipientId,
+        A.description
+        FROM groups as A
+        LEFT JOIN recipients_groups AS B
+        ON A.id=B.group_id
+        WHERE A.id=CAST(#{groupId} AS uuid)
+    </select>
+</mapper>
