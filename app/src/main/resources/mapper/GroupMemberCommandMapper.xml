@@ -13,7 +13,7 @@
         DELETE FROM recipients_groups
         WHERE
         <foreach collection="memberships" item="membership" separator="OR">
-            (recipient_id=CAST(#{membership.recipient_id} AS uuid) AND group_id=CAST(#{membership.group_id} AS uuid))
+            (recipient_id=CAST(#{membership.recipientId} AS uuid) AND group_id=CAST(#{membership.groupId} AS uuid))
         </foreach>
     </delete>
 </mapper>

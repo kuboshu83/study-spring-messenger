@@ -30,14 +30,7 @@
     <input type="submit" value="更新">
 </form>
 
-<h1>登録済み受信者一覧</h1>
-<ul th:each="registeredRecipient: ${registeredRecipients}">
-    <li><span th:text="${registeredRecipient.name}">name</span>(<span
-            th:text="${registeredRecipient.email}">email</span>)
-    </li>
-</ul>
-
-<h1>受信者検索(Javascriptバージョン)</h1>
+<h1>受信者検索</h1>
 <div>
     <form id="search-recipient-form">
         <label for="search-name">検索(名前):</label>
@@ -58,6 +51,8 @@
         event.preventDefault();
         searchRecipient();
     })
+
+    renderRegisteredRecipient();
 
     function searchRecipient() {
         const formData = new FormData(searchRecipientForm)
@@ -119,8 +114,14 @@
                 }
             });
 
+            const hiddenInput = document.createElement("input");
+            hiddenInput.type = "hidden";
+            hiddenInput.value = recipient.id;
+            hiddenInput.name = "members"
+
             li.appendChild(name);
             li.appendChild(button);
+            li.appendChild(hiddenInput);
             list.appendChild(li);
         });
     }
