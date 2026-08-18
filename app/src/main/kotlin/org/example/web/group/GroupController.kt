@@ -1,10 +1,9 @@
 package org.example.web.group
 
-import org.example.domain.model.Description
-import org.example.domain.model.Group
-import org.example.domain.model.GroupId
-import org.example.domain.model.GroupName
+import org.example.domain.model.*
 import org.example.domain.service.*
+import org.example.web.GroupViewModel
+import org.example.web.RecipientViewModel
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
@@ -50,14 +49,16 @@ class GroupController(
         model: Model
     ): String {
         val group = groupSearchService.findByGroupId(GroupId.fromString(groupId))
-        model.addAttribute("group", group)
+        val groupViewModel = GroupViewModel.fromDomain(group)
+        model.addAttribute("group", groupViewModel)
 
         val registeredRecipients = if (group.isEmpty()) {
             emptyList()
         } else {
             recipientSearchService.findRecipientsByRecipientIds(group.members.members)
         }
-        model.addAttribute("registeredRecipients", registeredRecipients)
+        val registeredRecipientViewModes = registeredRecipients.map { RecipientViewModel.fromDomain(it) }
+        model.addAttribute("registeredRecipients", registeredRecipientViewModes)
 
         return "group/groupDetailForm"
     }
@@ -70,7 +71,14 @@ class GroupController(
 
     @PostMapping("/{id}/update")
     fun updateGroup(@PathVariable("id") groupId: String, form: UpdateGroupForm): String {
-        val group = Group(GroupId.fromString(groupId), GroupName(form.name), form.locked, Description(form.description))
+        val members = UniqueMembers(form.members.map { RecipientId.fromString(it) })
+        val group = Group(
+            GroupId.fromString(groupId),
+            GroupName(form.name),
+            form.locked,
+            members,
+            Description(form.description)
+        )
         groupUpdateService.update(group)
         return REDIRECT_TO_GROUP_TOP
     }

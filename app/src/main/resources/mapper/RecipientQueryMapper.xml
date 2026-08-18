@@ -17,7 +17,7 @@
         SELECT id, name, email, locked FROM recipients
         WHERE id IN
         <foreach collection="recipientIds" item="recipientId" separator="," open="(" close=")">
-            #{recipientId}
+            CAST(#{recipientId} AS uuid)
         </foreach>
     </select>
 
