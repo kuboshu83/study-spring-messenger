@@ -5,7 +5,7 @@
         INSERT INTO recipients_groups (recipient_id, group_id)
         VALUES
         <foreach collection="memberships" item="membership" separator=",">
-            (CAST(#{membership.recipient_id} AS uuid), CAST(#{membership.group_id} AS uuid))
+            (CAST(#{membership.recipientId} AS uuid), CAST(#{membership.groupId} AS uuid))
         </foreach>
     </insert>
 
