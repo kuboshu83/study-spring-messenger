@@ -9,12 +9,12 @@
 <div><a th:href="@{/groups}">グループトップページ</a></div>
 
 <h1>グループ詳細</h1>
-<form method="post" th:action="@{/groups/{id}/update(id=${group.id.value})}">
+<form method="post" th:action="@{/groups/{id}/update(id=${group.id})}">
     <label for="name">名前:</label>
-    <input id="name" name="name" type="text" th:value="${group.name.value}"/><br>
+    <input id="name" name="name" type="text" th:value="${group.name}"/><br>
 
     <label for="description">説明:</label>
-    <textarea id="description" name="description" th:text="${group.description.value}"></textarea><br>
+    <textarea id="description" name="description" th:text="${group.description}"></textarea><br>
 
     <label>ロック状況:</label>
     <input type="radio" id="locked-true" name="locked" value="true" th:checked="${group.locked}">
@@ -31,8 +31,10 @@
 </form>
 
 <h1>登録済み受信者一覧</h1>
-<ul th:each="member: ${members}">
-    <li><span th:text="${member.name.value}">name</span>(<span th:text="${member.email.value}">email</span>)</li>
+<ul th:each="registeredRecipient: ${registeredRecipients}">
+    <li><span th:text="${registeredRecipient.name}">name</span>(<span
+            th:text="${registeredRecipient.email}">email</span>)
+    </li>
 </ul>
 
 <h1>受信者検索(Javascriptバージョン)</h1>
