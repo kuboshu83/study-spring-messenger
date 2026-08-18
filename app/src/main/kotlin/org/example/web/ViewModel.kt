@@ -1,5 +1,6 @@
 package org.example.web
 
+import org.example.domain.model.Application
 import org.example.domain.model.Group
 import org.example.domain.model.Recipient
 
@@ -34,6 +35,27 @@ data class RecipientViewModel private constructor(
     companion object {
         fun fromDomain(recipient: Recipient): RecipientViewModel {
             return RecipientViewModel(recipient.id.value, recipient.name.value, recipient.email.value, recipient.locked)
+        }
+    }
+}
+
+@ConsistentCopyVisibility
+data class ApplicationViewModel private constructor(
+    val id: String,
+    val name: String,
+    val locked: Boolean,
+    val groups: List<String>,
+    val description: String
+) {
+    companion object {
+        fun fromDomain(application: Application): ApplicationViewModel {
+            return ApplicationViewModel(
+                application.id.value,
+                application.name.value,
+                application.locked,
+                application.groups.toList().map { it.value },
+                application.description.value
+            )
         }
     }
 }

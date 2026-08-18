@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>新規アプリケーション</title>
+</head>
+<body>
+<div><a th:href="@{/applications}">アプリケーショントップページ</a></div>
+
+<h1>新規アプリケーション</h1>
+<form method="post" th:action="@{/applications/create}">
+    <div>
+        <label for="name">名前:</label>
+        <input id="name" name="name" type="text">
+    </div>
+    <div>
+        <label for="description">説明:</label>
+        <textarea id="description" name="description" cols="50" rows="2"></textarea>
+    </div>
+
+    <input type="submit" value="作成">
+</form>
+
+</body>
+</html>
