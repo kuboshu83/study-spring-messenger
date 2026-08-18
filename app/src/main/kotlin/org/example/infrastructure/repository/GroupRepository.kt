@@ -67,7 +67,7 @@ class GroupCommandImpl(
                 foundMembers.add(RecipientId.fromString(dto.recipientId))
             }
         }
-        val previousMembers = UniqueMembers(foundMembers)
+        val previousMembers = GroupUniqueMembers(foundMembers)
         val currentMembers = group.members
 
         val deleteMembers = previousMembers.subtract(currentMembers)
