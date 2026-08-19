@@ -24,4 +24,18 @@
     <select id="fuzzyFindRecipientsByRecipientName" resultType="org.example.infrastructure.repository.RecipientDTO">
         SELECT id, name, email, locked FROM recipients WHERE name LIKE CONCAT('%', #{recipientName}, '%')
     </select>
+
+    <select id="findRecipientsByApplicationId" resultType="org.example.infrastructure.repository.RecipientDTO">
+        SELECT
+        C.id,
+        C.name,
+        C.email,
+        C.locked
+        FROM applications_groups AS A
+        LEFT JOIN recipients_groups AS B
+        ON A.group_id=B.group_id
+        LEFT JOIN recipients AS C
+        ON B.recipient_id=C.id
+        WHERE A.application_id=CAST(#{recipientId} AS uuid)
+    </select>
 </mapper>

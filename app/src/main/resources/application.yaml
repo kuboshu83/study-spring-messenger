@@ -8,6 +8,12 @@ spring:
   flyway:
     locations: classpath:/db/migrations
 
+  rabbitmq:
+    username: messenger
+    password: change-me
+    host: localhost
+    port: 5672
+
 mybatis:
   mapper-locations: classpath:/mapper/*.xml
   configuration:
