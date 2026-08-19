@@ -39,10 +39,10 @@ data class GroupName(val value: String) {
     }
 }
 
-class UniqueMembers(val members: Set<RecipientId>) {
+class GroupUniqueMembers(val members: Set<RecipientId>) {
     companion object {
-        fun empty(): UniqueMembers {
-            return UniqueMembers(emptySet())
+        fun empty(): GroupUniqueMembers {
+            return GroupUniqueMembers(emptySet())
         }
     }
 
@@ -57,16 +57,16 @@ class UniqueMembers(val members: Set<RecipientId>) {
         return members.contains(recipientId)
     }
 
-    fun add(recipientId: RecipientId): UniqueMembers {
-        return UniqueMembers(members + recipientId)
+    fun add(recipientId: RecipientId): GroupUniqueMembers {
+        return GroupUniqueMembers(members + recipientId)
     }
 
-    fun delete(recipientId: RecipientId): UniqueMembers {
-        return UniqueMembers(members - recipientId)
+    fun delete(recipientId: RecipientId): GroupUniqueMembers {
+        return GroupUniqueMembers(members - recipientId)
     }
 
-    fun subtract(other: UniqueMembers): UniqueMembers {
-        return UniqueMembers(members - other.members)
+    fun subtract(other: GroupUniqueMembers): GroupUniqueMembers {
+        return GroupUniqueMembers(members - other.members)
     }
 }
 
@@ -74,17 +74,17 @@ class Group(
     val id: GroupId,
     val name: GroupName,
     val locked: Boolean,
-    val members: UniqueMembers,
+    val members: GroupUniqueMembers,
     val description: Description
 ) {
     companion object {
         fun create(name: GroupName, description: Description): Group {
-            return Group(GroupId.createRandom(), name, false, UniqueMembers.empty(), description)
+            return Group(GroupId.createRandom(), name, false, GroupUniqueMembers.empty(), description)
         }
     }
 
     constructor(id: GroupId, name: GroupName, locked: Boolean, description: Description)
-            : this(id, name, locked, UniqueMembers.empty(), description)
+            : this(id, name, locked, GroupUniqueMembers.empty(), description)
 
     fun isEmpty(): Boolean {
         return members.isEmpty()

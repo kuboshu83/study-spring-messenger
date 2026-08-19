@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>アプリケーショントップページ</title>
+</head>
+<body>
+
+<div><a th:href="@{/}">トップページ</a></div>
+<div><a th:href="@{/applications/create}">新規アプリケーション</a></div>
+<h1>アプリケーション一覧</h1>
+<div th:each="app: ${applications}">
+    <div>
+        <a th:href="@{/applications/{id}(id=${app.id})}">
+            名前: <span th:text="${app.name}">name</span>
+            ロック <span th:text="${app.locked}">locked</span>
+            説明: <span th:text="${app.description}">description</span>
+        </a>
+    </div>
+    <div>
+        <form method="post" th:action="@{/applications/{id}/delete(id=${app.id})}">
+            <input type="submit" value="削除">
+        </form>
+    </div>
+</div>
+</body>
+</html>

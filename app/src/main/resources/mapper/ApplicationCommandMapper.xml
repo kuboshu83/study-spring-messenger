@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.infrastructure.repository.ApplicationCommandDAO">
+    <insert id="save" parameterType="org.example.infrastructure.repository.ApplicationDTO">
+        INSERT INTO applications (id, name, locked, description)
+        VALUES (CAST(#{applicationId} AS uuid), #{name}, #{locked}, #{description})
+    </insert>
+
+    <delete id="deleteByApplicationId">
+        DELETE FROM applications WHERE id=CAST(#{id} AS uuid)
+    </delete>
+
+    <update id="update" parameterType="org.example.infrastructure.repository.ApplicationDTO">
+        UPDATE applications SET name=#{name}, locked=#{locked}, description=#{description}
+        WHERE id=CAST(#{applicationId} AS uuid)
+    </update>
+</mapper>

@@ -71,7 +71,7 @@ class GroupController(
 
     @PostMapping("/{id}/update")
     fun updateGroup(@PathVariable("id") groupId: String, form: UpdateGroupForm): String {
-        val members = UniqueMembers(form.members.map { RecipientId.fromString(it) })
+        val members = GroupUniqueMembers(form.members.map { RecipientId.fromString(it) })
         val group = Group(
             GroupId.fromString(groupId),
             GroupName(form.name),
