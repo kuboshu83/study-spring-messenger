@@ -2,10 +2,9 @@ package org.example.notification.common.domain.model
 
 import org.example.domain.errors.EmptyException
 import org.example.domain.errors.InvalidSizeException
-import org.example.domain.model.Recipient
-import org.example.domain.model.RecipientId
+import org.example.domain.model.RecipientEmailAddress
 
-data class NotificationTitle(val value: String) {
+data class MessageTitle(val value: String) {
     companion object {
         private const val MAX_SIZE = 20
         private const val MIN_SIZE = 1
@@ -14,12 +13,12 @@ data class NotificationTitle(val value: String) {
     init {
         val size = value.length
         if (size !in MIN_SIZE..MAX_SIZE) {
-            throw InvalidSizeException(" notification title size is out of range: minLimit=$MIN_SIZE, maxLimit=$MAX_SIZE, actual=$size")
+            throw InvalidSizeException(" message title size is out of range: minLimit=$MIN_SIZE, maxLimit=$MAX_SIZE, actual=$size")
         }
     }
 }
 
-data class NotificationBody(val value: String) {
+data class MessageBody(val value: String) {
     companion object {
         private const val MAX_SIZE = 100
         private const val MIN_SIZE = 1
@@ -28,39 +27,31 @@ data class NotificationBody(val value: String) {
     init {
         val size = value.length
         if (size !in MIN_SIZE..MAX_SIZE) {
-            throw InvalidSizeException("notification body size is out of range: minLimit=$MIN_SIZE, maxLimit=$MAX_SIZE, actual=$size")
+            throw InvalidSizeException("message body size is out of range: minLimit=$MIN_SIZE, maxLimit=$MAX_SIZE, actual=$size")
         }
     }
 }
 
-class NotificationRecipients private constructor(val recipients: List<Recipient>) {
+class MessageDestinations(private val addresses: Set<RecipientEmailAddress>) {
     companion object {
-        fun fromList(recipients: List<Recipient>): NotificationRecipients {
-            val recipientsMap = mutableMapOf<RecipientId, Recipient>()
-            for (recipient in recipients) {
-                if (!recipientsMap.containsKey(recipient.id)) {
-                    recipientsMap[recipient.id] = recipient
-                }
-            }
-            return NotificationRecipients(recipientsMap.values.toList())
+        fun fromList(addresses: List<RecipientEmailAddress>): MessageDestinations {
+            return MessageDestinations(addresses.toSet())
         }
     }
 
-    fun toList(): List<Recipient> {
-        return recipients
-    }
+    fun toSet(): Set<RecipientEmailAddress> = addresses
 
-    fun isEmpty(): Boolean = recipients.isEmpty()
+    fun isEmpty(): Boolean = addresses.isEmpty()
 }
 
-data class NotificationMessage(
-    val title: NotificationTitle,
-    val body: NotificationBody,
-    val recipients: NotificationRecipients
+data class PublishMessage(
+    val title: MessageTitle,
+    val body: MessageBody,
+    val destinations: MessageDestinations
 ) {
     init {
-        if (recipients.isEmpty()) {
-            throw EmptyException("notification destination is empty")
+        if (destinations.isEmpty()) {
+            throw EmptyException("message destination is empty")
         }
     }
 }
