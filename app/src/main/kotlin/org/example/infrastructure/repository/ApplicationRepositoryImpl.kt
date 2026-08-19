@@ -9,7 +9,8 @@ import org.springframework.stereotype.Repository
 @Repository
 class ApplicationCommandImpl(
     private val applicationCommandDAO: ApplicationCommandDAO,
-    private val applicationGroupDAO: ApplicationGroupCommandDAO
+    private val applicationGroupCommandDAO: ApplicationGroupCommandDAO,
+    private val applicationQueryDAO: ApplicationQueryDAO
 ) : ApplicationCommand {
     override fun save(application: Application) {
         val applicationDTO = ApplicationDtoCollection.fromApplication(application).toList().first()
@@ -17,12 +18,39 @@ class ApplicationCommandImpl(
 
         val registrations = ApplicationGroupRegistrationDtoCollection.fromApplication(application).toList()
         if (registrations.isNotEmpty()) {
-            applicationGroupDAO.save(registrations)
+            applicationGroupCommandDAO.save(registrations)
         }
     }
 
     override fun deleteByApplicationId(applicationId: ApplicationId) {
         applicationCommandDAO.deleteByApplicationId(applicationId.value)
+    }
+
+    override fun update(application: Application) {
+        val applicationDTO = ApplicationDtoCollection.fromApplication(application).toList().first()
+        applicationCommandDAO.update(applicationDTO)
+
+        val foundRegistrations = mutableListOf<GroupId>()
+        for (dto in applicationQueryDAO.findByApplicationId(application.id.value)) {
+            if (dto.groupId != null) {
+                foundRegistrations.add(GroupId.fromString(dto.groupId))
+            }
+        }
+
+        val currentRegistrations = ApplicationUniqueMembers(foundRegistrations)
+        val newRegistrations = application.groups
+
+        val deleteTargetRegistrations = currentRegistrations.subtract(newRegistrations).toList()
+            .map { group -> ApplicationGroupRegistrationDTO(application.id, group) }
+        if (deleteTargetRegistrations.isNotEmpty()) {
+            applicationGroupCommandDAO.delete(deleteTargetRegistrations)
+        }
+
+        val addTargetRegistrations = newRegistrations.subtract(currentRegistrations).toList()
+            .map { group -> ApplicationGroupRegistrationDTO(application.id, group) }
+        if (addTargetRegistrations.isNotEmpty()) {
+            applicationGroupCommandDAO.save(addTargetRegistrations)
+        }
     }
 }
 
@@ -35,6 +63,16 @@ class ApplicationQueryImpl(private val applicationQueryDAO: ApplicationQueryDAO)
 
     override fun findByApplicationName(applicationName: ApplicationName): Application? {
         val applicationDTOs = applicationQueryDAO.findByApplicationName(applicationName.value)
+        val applications = ApplicationDtoCollection(applicationDTOs).toApplications()
+        return when (applications.size) {
+            0 -> null
+            1 -> applications.first()
+            else -> throw IllegalStateException("application search result by name must be 0 or 1: resultCount=${applications.size}")
+        }
+    }
+
+    override fun findByApplicationId(applicationId: ApplicationId): Application? {
+        val applicationDTOs = applicationQueryDAO.findByApplicationId(applicationId.value)
         val applications = ApplicationDtoCollection(applicationDTOs).toApplications()
         return when (applications.size) {
             0 -> null
@@ -150,15 +188,18 @@ class ApplicationGroupRegistrationDtoCollection(private val applicationGroupRegi
 interface ApplicationQueryDAO {
     fun findAll(): List<ApplicationDTO>
     fun findByApplicationName(applicationName: String): List<ApplicationDTO>
+    fun findByApplicationId(applicationId: String): List<ApplicationDTO>
 }
 
 @Mapper
 interface ApplicationCommandDAO {
     fun save(application: ApplicationDTO)
     fun deleteByApplicationId(applicationId: String)
+    fun update(application: ApplicationDTO)
 }
 
 @Mapper
 interface ApplicationGroupCommandDAO {
     fun save(registrations: List<ApplicationGroupRegistrationDTO>)
+    fun delete(registrations: List<ApplicationGroupRegistrationDTO>)
 }

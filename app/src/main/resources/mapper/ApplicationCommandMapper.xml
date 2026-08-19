@@ -9,4 +9,9 @@
     <delete id="deleteByApplicationId">
         DELETE FROM applications WHERE id=CAST(#{id} AS uuid)
     </delete>
+
+    <update id="update" parameterType="org.example.infrastructure.repository.ApplicationDTO">
+        UPDATE applications SET name=#{name}, locked=#{locked}, description=#{description}
+        WHERE id=CAST(#{applicationId} AS uuid)
+    </update>
 </mapper>

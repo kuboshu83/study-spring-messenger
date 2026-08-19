@@ -38,4 +38,33 @@
         ON A.id=B.group_id
         WHERE A.id=CAST(#{groupId} AS uuid)
     </select>
+
+    <select id="fuzzyFindGroupsByGroupName" resultType="org.example.infrastructure.repository.GroupDTO">
+        SELECT
+        A.id,
+        A.name,
+        A.locked,
+        B.recipient_id AS recipientId,
+        A.description
+        FROM groups as A
+        LEFT JOIN recipients_groups AS B
+        ON A.id=B.group_id
+        WHERE A.name LIKE CONCAT('%', #{groupName}, '%')
+    </select>
+
+    <select id="findGroupsByGroupIds" resultType="org.example.infrastructure.repository.GroupDTO">
+        SELECT
+        A.id,
+        A.name,
+        A.locked,
+        B.recipient_id AS recipientId,
+        A.description
+        FROM groups as A
+        LEFT JOIN recipients_groups AS B
+        ON A.id=B.group_id
+        WHERE A.id IN
+        <foreach collection="groupIds" item="groupId" separator="," open="(" close=")">
+            CAST(#{groupId} AS uuid)
+        </foreach>
+    </select>
 </mapper>

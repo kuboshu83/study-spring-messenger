@@ -8,5 +8,126 @@
 
 <div><a th:href="@{/applications}">アプリケーショントップページ</a></div>
 <h1>アプリケーション詳細</h1>
+<form method="post" th:action="@{/applications/{id}/update(id=${app.id})}">
+    <div>
+        <label for="name">名前:</label>
+        <input id="name" name="name" type="text" th:value="${app.name}">
+    </div>
+    <div>
+        <label for="description">説明</label>
+        <textarea id="description" name="description" cols="50" rows="2" th:text="${app.description}"></textarea>
+    </div>
+
+    <div>
+        <label>ロック状況</label>
+        <input type="radio" id="locked-true" name="locked" value="true" th:checked="${app.locked}">
+        <label for="locked-true">locked</label>
+        <input type="radio" id="locked-false" name="locked" value="false" th:checked="${!app.locked}">
+        <label for="locked-false">unlocked</label>
+    </div>
+
+    <div>
+        <div>登録済みグループ一覧</div>
+        <ul id="registered-group-list"></ul>
+    </div>
+
+    <input type="submit" value="更新">
+</form>
+
+<h1>グループ検索</h1>
+<div>
+    <form id="search-group-form">
+        <label for="search-name">検索(名前):</label>
+        <input id="search-name" name="searchName" type="text"/><br>
+        <input type="button" onclick="searchGroup()" value="検索">
+    </form>
+    <ul id="search-group-results"></ul>
+</div>
+
+<script th:inline="javascript">
+    const baseUrl = /*[[@{/api/groups}]]*/'';
+    const registeredGroups = new Map((/*[[${registeredGroups}]]*/[]).map(group => [group.id, group]));
+
+    const searchGroupForm = document.getElementById("search-group-form");
+    searchGroupForm.addEventListener("submit", event => {
+        event.preventDefault();
+        searchGroup();
+    });
+
+    renderRegisteredGroup();
+
+    function searchGroup() {
+        const formData = new FormData(searchGroupForm);
+        const searchName = formData.get("searchName");
+        const url = searchName === "" ? baseUrl : `${baseUrl}?name=${searchName}`
+        fetch(url).then(res => {
+            if (res.ok) {
+                return res.json();
+            }
+            throw Error(`search group error: searchName='${searchName}', status=${res.status}`)
+        }).then(groups => {
+            renderSearchGroupResult(groups);
+        }).catch(error => {
+            console.error(error);
+        });
+    }
+
+    function renderSearchGroupResult(groups) {
+        const list = document.getElementById("search-group-results");
+        list.replaceChildren();
+        groups.forEach(group => {
+            const li = document.createElement("li");
+
+            const name = document.createElement("span");
+            name.textContent = group.name;
+
+            const button = document.createElement("button");
+            button.type = "button";
+            button.textContent = "追加";
+            button.addEventListener("click", () => {
+                console.log(registeredGroups);
+                if (!registeredGroups.has(group.id)) {
+                    registeredGroups.set(group.id, group);
+                }
+                renderRegisteredGroup();
+            });
+
+            li.appendChild(name);
+            li.appendChild(button);
+            list.appendChild(li);
+        })
+    }
+
+    function renderRegisteredGroup() {
+        const list = document.getElementById("registered-group-list");
+        list.replaceChildren();
+        registeredGroups.forEach(group => {
+            const li = document.createElement("li");
+
+            const name = document.createElement("span");
+            name.textContent = group.name;
+
+            const button = document.createElement("button");
+            button.type = "button";
+            button.textContent = "解除";
+            button.addEventListener("click", () => {
+                if (registeredGroups.has(group.id)) {
+                    registeredGroups.delete(group.id);
+                    renderRegisteredGroup();
+                }
+            });
+
+            const hiddenInput = document.createElement("input");
+            hiddenInput.type = "hidden";
+            hiddenInput.name = "groups";
+            hiddenInput.value = group.id;
+
+            li.appendChild(name);
+            li.appendChild(button);
+            li.appendChild(hiddenInput);
+            list.appendChild(li);
+        });
+    }
+</script>
 </body>
 </html>

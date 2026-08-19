@@ -95,4 +95,8 @@ class Application(
         val updatedGroups = groups.add(groupId)
         return Application(id, name, locked, updatedGroups, description)
     }
+
+    fun isEmpty(): Boolean {
+        return groups.isEmpty()
+    }
 }

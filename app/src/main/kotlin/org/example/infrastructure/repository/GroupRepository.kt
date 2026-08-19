@@ -34,6 +34,17 @@ class GroupQueryImpl(private val groupQueryDAO: GroupQueryDAO) : GroupQuery {
             else -> throw IllegalStateException("group search result by name must be 0 or 1: resultCount=${groups.size}")
         }
     }
+
+    override fun fuzzyFindGroupsByGroupName(groupName: GroupName): List<Group> {
+        // TODO: 検索条件あGroupNameだと１文字とかで検索できないから、SearchKeyworkd的なクラスを作る
+        val groupDTOs = groupQueryDAO.fuzzyFindGroupsByGroupName(groupName.value)
+        return GroupDtoCollection(groupDTOs).toGroups()
+    }
+
+    override fun findGroupsByGroupIds(groupIds: Set<GroupId>): List<Group> {
+        val groupDTOs = groupQueryDAO.findGroupsByGroupIds(groupIds.map { it.value })
+        return GroupDtoCollection(groupDTOs).toGroups()
+    }
 }
 
 @Repository
@@ -175,6 +186,8 @@ interface GroupQueryDAO {
     fun findAll(): List<GroupDTO>
     fun findGroupByGroupName(groupName: String): List<GroupDTO>
     fun findGroupByGroupId(groupId: String): List<GroupDTO>
+    fun fuzzyFindGroupsByGroupName(groupName: String): List<GroupDTO>
+    fun findGroupsByGroupIds(groupIds: List<String>): List<GroupDTO>
 }
 
 @Mapper

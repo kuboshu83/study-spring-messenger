@@ -25,4 +25,17 @@
         ON A.id = B.application_id
         WHERE A.name=#{applicationName}
     </select>
+
+    <select id="findByApplicationId" resultType="org.example.infrastructure.repository.ApplicationDTO">
+        SELECT
+        A.id AS applicationId,
+        A.name,
+        A.locked,
+        B.group_id AS groupId,
+        A.description
+        FROM applications AS A
+        LEFT JOIN applications_groups AS B
+        ON A.id = B.application_id
+        WHERE A.id=CAST(#{applicationId} AS uuid)
+    </select>
 </mapper>

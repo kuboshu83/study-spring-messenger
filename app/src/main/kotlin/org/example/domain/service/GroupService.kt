@@ -22,6 +22,17 @@ class GroupSearchService(private val groupQuery: GroupQuery) {
             ?: throw DataNotFoundException("specified group not found: groupId=${groupId.value}")
         return group
     }
+
+    fun fuzzyFindGroupsByGroupName(groupName: GroupName): List<Group> {
+        return groupQuery.fuzzyFindGroupsByGroupName(groupName)
+    }
+
+    fun findGroupsByGroupIds(groupIds: Set<GroupId>): List<Group> {
+        if (groupIds.isEmpty()) {
+            throw IllegalStateException("no search keyword(group id) is specified")
+        }
+        return groupQuery.findGroupsByGroupIds(groupIds)
+    }
 }
 
 @Service

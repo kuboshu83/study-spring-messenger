@@ -1,12 +1,9 @@
 package org.example.web.application
 
-import org.example.domain.model.ApplicationId
-import org.example.domain.model.ApplicationName
-import org.example.domain.model.Description
-import org.example.domain.service.ApplicationCreateService
-import org.example.domain.service.ApplicationDeleteService
-import org.example.domain.service.ApplicationSearchService
+import org.example.domain.model.*
+import org.example.domain.service.*
 import org.example.web.ApplicationViewModel
+import org.example.web.GroupViewModel
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
@@ -19,7 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping
 class ApplicationController(
     private val applicationSearchService: ApplicationSearchService,
     private val applicationCreateService: ApplicationCreateService,
-    private val applicationDeleteService: ApplicationDeleteService
+    private val applicationDeleteService: ApplicationDeleteService,
+    private val applicationUpdateService: ApplicationUpdateService,
+    private val groupSearchService: GroupSearchService
 ) {
     companion object {
         private const val REDIRECT_TO_APPLICATION_TOP = "redirect:/applications"
@@ -45,7 +44,18 @@ class ApplicationController(
     }
 
     @GetMapping("/{id}")
-    fun showApplicationDetailInformation(@PathVariable("id") id: String): String {
+    fun showApplicationDetailInformation(@PathVariable("id") id: String, model: Model): String {
+        val application = applicationSearchService.findByApplicationId(ApplicationId.fromString(id))
+        val applicationViewModel = ApplicationViewModel.fromDomain(application)
+        model.addAttribute("app", applicationViewModel)
+
+        val groups = if (!application.isEmpty()) {
+            groupSearchService.findGroupsByGroupIds(application.groups.toList().toSet())
+        } else {
+            emptyList()
+        }
+        val groupViewModels = groups.map { group -> GroupViewModel.fromDomain(group) }
+        model.addAttribute("registeredGroups", groupViewModels)
         return "application/applicationDetailForm"
     }
 
@@ -53,5 +63,19 @@ class ApplicationController(
     fun deleteApplicationByApplicationId(@PathVariable("id") id: String): String {
         applicationDeleteService.deleteByApplicationId(ApplicationId.fromString(id))
         return "redirect:/applications"
+    }
+
+    @PostMapping("/{id}/update")
+    fun updateApplication(@PathVariable("id") id: String, form: ApplicationUpdateForm): String {
+        val groups = ApplicationUniqueMembers(form.groups.map { GroupId.fromString(it) })
+        val application = Application(
+            ApplicationId.fromString(id),
+            ApplicationName(form.name),
+            form.locked,
+            groups,
+            Description(form.description)
+        )
+        applicationUpdateService.update(application)
+        return REDIRECT_TO_APPLICATION_TOP
     }
 }
