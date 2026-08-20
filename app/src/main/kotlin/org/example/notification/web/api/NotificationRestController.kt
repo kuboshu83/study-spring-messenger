@@ -1,4 +1,4 @@
-package org.example.web.notification.api
+package org.example.notification.web.api
 
 import org.example.manager.domain.model.ApplicationId
 import org.example.notification.domain.model.MessageBody
