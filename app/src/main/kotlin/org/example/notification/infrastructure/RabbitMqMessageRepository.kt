@@ -19,10 +19,10 @@ import org.springframework.stereotype.Repository
 import tools.jackson.module.kotlin.jacksonObjectMapper
 import tools.jackson.module.kotlin.readValue
 
-data class PublishMessageDTO(val title: String, val body: String, val destinations: List<String>) {
+data class MessageDTO(val title: String, val body: String, val destinations: List<String>) {
     companion object {
-        fun fromDomain(message: Message): PublishMessageDTO {
-            return PublishMessageDTO(
+        fun fromDomain(message: Message): MessageDTO {
+            return MessageDTO(
                 message.title.value,
                 message.body.value,
                 message.destinations.toSet().map { it.value }
@@ -40,7 +40,7 @@ data class PublishMessageDTO(val title: String, val body: String, val destinatio
 class RabbitMqMessageRepository(private val template: RabbitTemplate, private val queue: Queue) :
     MessagePublisher {
     override fun publish(message: Message) {
-        val dto = PublishMessageDTO.fromDomain(message)
+        val dto = MessageDTO.fromDomain(message)
         val message = jacksonObjectMapper().writeValueAsString(dto)
         template.convertAndSend(queue.name, message)
     }
@@ -51,7 +51,7 @@ class RabbitMqMessageRepository(private val template: RabbitTemplate, private va
 class RabbitMqMessageReceiver(private val messageReceiveHandler: MessageReceiveHandler) {
     @RabbitHandler
     fun receive(message: String) {
-        val messageDTO = jacksonObjectMapper().readValue<PublishMessageDTO>(message)
+        val messageDTO = jacksonObjectMapper().readValue<MessageDTO>(message)
         val message = messageDTO.toDomain()
         messageReceiveHandler.handle(message)
     }
