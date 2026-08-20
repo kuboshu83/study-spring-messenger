@@ -1,4 +1,4 @@
-package org.example.web
+package org.example.web.manager
 
 import org.example.manager.domain.model.Application
 import org.example.manager.domain.model.Group

@@ -1,4 +1,4 @@
-package org.example.web.recipient
+package org.example.web.manager.recipient
 
 import org.example.manager.domain.model.Recipient
 import org.example.manager.domain.model.RecipientEmailAddress

@@ -1,9 +1,9 @@
-package org.example.web.group
+package org.example.web.manager.group
 
 import org.example.manager.domain.model.*
 import org.example.manager.domain.service.*
-import org.example.web.GroupViewModel
-import org.example.web.RecipientViewModel
+import org.example.web.manager.GroupViewModel
+import org.example.web.manager.RecipientViewModel
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping

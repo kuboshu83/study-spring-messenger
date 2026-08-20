@@ -1,4 +1,4 @@
-package org.example.web.group
+package org.example.web.manager.group
 
 import org.example.manager.domain.model.Group
 import org.example.manager.domain.model.GroupName
