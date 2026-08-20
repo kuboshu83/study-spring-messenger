@@ -44,7 +44,7 @@ class MessageDestinations(private val addresses: Set<RecipientEmailAddress>) {
     fun isEmpty(): Boolean = addresses.isEmpty()
 }
 
-data class PublishMessage(
+data class Message(
     val title: MessageTitle,
     val body: MessageBody,
     val destinations: MessageDestinations
