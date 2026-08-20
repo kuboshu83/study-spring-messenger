@@ -1,4 +1,4 @@
-package org.example.notification.common.domain.model
+package org.example.notification.domain.model
 
 import org.example.domain.errors.EmptyException
 import org.example.domain.errors.InvalidSizeException

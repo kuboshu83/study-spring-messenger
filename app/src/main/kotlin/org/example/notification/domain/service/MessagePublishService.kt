@@ -1,12 +1,12 @@
-package org.example.notification.publisher.domain.service
+package org.example.notification.domain.service
 
 import org.example.domain.model.ApplicationId
 import org.example.domain.service.RecipientSearchService
-import org.example.notification.common.domain.model.MessageBody
-import org.example.notification.common.domain.model.MessageDestinations
-import org.example.notification.common.domain.model.MessageTitle
-import org.example.notification.common.domain.model.PublishMessage
-import org.example.notification.publisher.domain.repository.MessageRepository
+import org.example.notification.domain.model.MessageBody
+import org.example.notification.domain.model.MessageDestinations
+import org.example.notification.domain.model.MessageTitle
+import org.example.notification.domain.model.PublishMessage
+import org.example.notification.domain.repository.MessageRepository
 import org.springframework.stereotype.Service
 
 @Service

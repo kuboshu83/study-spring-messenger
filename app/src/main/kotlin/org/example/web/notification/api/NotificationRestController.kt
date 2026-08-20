@@ -1,9 +1,9 @@
 package org.example.web.notification.api
 
 import org.example.domain.model.ApplicationId
-import org.example.notification.common.domain.model.MessageBody
-import org.example.notification.common.domain.model.MessageTitle
-import org.example.notification.publisher.domain.service.MessagePublishService
+import org.example.notification.domain.model.MessageBody
+import org.example.notification.domain.model.MessageTitle
+import org.example.notification.domain.service.MessagePublishService
 import org.springframework.web.bind.annotation.*
 
 data class MessagePublishRequestDTO(val title: String, val body: String)

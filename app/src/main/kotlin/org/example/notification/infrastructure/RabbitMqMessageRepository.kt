@@ -1,7 +1,7 @@
-package org.example.notification.publisher.infrastructure
+package org.example.notification.infrastructure
 
-import org.example.notification.common.domain.model.PublishMessage
-import org.example.notification.publisher.domain.repository.MessageRepository
+import org.example.notification.domain.model.PublishMessage
+import org.example.notification.domain.repository.MessageRepository
 import org.springframework.amqp.core.Queue
 import org.springframework.amqp.core.QueueBuilder
 import org.springframework.amqp.rabbit.core.RabbitTemplate
