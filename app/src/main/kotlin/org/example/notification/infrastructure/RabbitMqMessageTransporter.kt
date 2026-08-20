@@ -72,4 +72,6 @@ class RabbitMqConfig {
     fun queue(): Queue {
         return QueueBuilder.durable("q.notification").quorum().build()
     }
+
+    // TODO: Dead-Letter-Queueの設定
 }
