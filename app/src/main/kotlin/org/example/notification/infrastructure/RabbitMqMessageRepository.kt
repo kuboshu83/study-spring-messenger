@@ -5,7 +5,7 @@ import org.example.notification.domain.model.Message
 import org.example.notification.domain.model.MessageBody
 import org.example.notification.domain.model.MessageDestinations
 import org.example.notification.domain.model.MessageTitle
-import org.example.notification.domain.repository.MessagePublishRepository
+import org.example.notification.domain.repository.MessagePublisher
 import org.example.notification.domain.service.MessageReceiveHandler
 import org.springframework.amqp.core.Queue
 import org.springframework.amqp.core.QueueBuilder
@@ -38,7 +38,7 @@ data class PublishMessageDTO(val title: String, val body: String, val destinatio
 
 @Repository
 class RabbitMqMessageRepository(private val template: RabbitTemplate, private val queue: Queue) :
-    MessagePublishRepository {
+    MessagePublisher {
     override fun publish(message: Message) {
         val dto = PublishMessageDTO.fromDomain(message)
         val message = jacksonObjectMapper().writeValueAsString(dto)
