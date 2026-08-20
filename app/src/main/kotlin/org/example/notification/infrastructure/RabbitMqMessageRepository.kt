@@ -3,8 +3,8 @@ package org.example.notification.infrastructure
 import org.example.manager.domain.model.RecipientEmailAddress
 import org.example.notification.domain.model.Message
 import org.example.notification.domain.model.MessageBody
-import org.example.notification.domain.model.MessageDestinations
 import org.example.notification.domain.model.MessageTitle
+import org.example.notification.domain.model.UniqueMessageDestinationCollection
 import org.example.notification.domain.repository.MessagePublisher
 import org.example.notification.domain.service.MessageReceiveHandler
 import org.springframework.amqp.core.Queue
@@ -32,7 +32,7 @@ data class MessageDTO(val title: String, val body: String, val destinations: Lis
 
     fun toDomain(): Message {
         val addresses = destinations.map { RecipientEmailAddress(it) }
-        return Message(MessageTitle(title), MessageBody(body), MessageDestinations.fromList(addresses))
+        return Message(MessageTitle(title), MessageBody(body), UniqueMessageDestinationCollection.fromList(addresses))
     }
 }
 
