@@ -9,7 +9,3 @@ class InvalidFormatException(message: String, cause: Throwable? = null) : Except
 class DataConflictedException(message: String, cause: Throwable? = null) : Exception(message, cause)
 
 class DataNotFoundException(message: String, cause: Throwable? = null) : Exception(message, cause)
-
-class InvalidSizeException(message: String, cause: Throwable? = null) : Exception(message, cause)
-
-class EmptyException(message: String, cause: Throwable? = null) : Exception(message, cause)
