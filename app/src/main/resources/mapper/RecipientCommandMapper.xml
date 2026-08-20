@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.example.infrastructure.repository.RecipientCommandDAO">
-    <insert id="save" parameterType="org.example.infrastructure.repository.RecipientDTO">
+<mapper namespace="org.example.manager.infrastructure.repository.RecipientCommandDAO">
+    <insert id="save" parameterType="org.example.manager.infrastructure.repository.RecipientDTO">
         INSERT INTO recipients (id, name, email, locked) VALUES (CAST(#{id} AS uuid), #{name}, #{email}, #{locked})
     </insert>
 
-    <update id="update" parameterType="org.example.infrastructure.repository.RecipientDTO">
+    <update id="update" parameterType="org.example.manager.infrastructure.repository.RecipientDTO">
         UPDATE recipients SET name=#{name}, email=#{email}, locked=#{locked} WHERE id=CAST(#{id} AS uuid)
     </update>
 
