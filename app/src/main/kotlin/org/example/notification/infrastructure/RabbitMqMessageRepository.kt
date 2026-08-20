@@ -1,14 +1,23 @@
 package org.example.notification.infrastructure
 
+import org.example.domain.model.RecipientEmailAddress
 import org.example.notification.domain.model.Message
+import org.example.notification.domain.model.MessageBody
+import org.example.notification.domain.model.MessageDestinations
+import org.example.notification.domain.model.MessageTitle
 import org.example.notification.domain.repository.MessagePublishRepository
+import org.example.notification.domain.service.MessageReceiveHandler
 import org.springframework.amqp.core.Queue
 import org.springframework.amqp.core.QueueBuilder
+import org.springframework.amqp.rabbit.annotation.RabbitHandler
+import org.springframework.amqp.rabbit.annotation.RabbitListener
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.stereotype.Component
 import org.springframework.stereotype.Repository
 import tools.jackson.module.kotlin.jacksonObjectMapper
+import tools.jackson.module.kotlin.readValue
 
 data class PublishMessageDTO(val title: String, val body: String, val destinations: List<String>) {
     companion object {
@@ -20,6 +29,11 @@ data class PublishMessageDTO(val title: String, val body: String, val destinatio
             )
         }
     }
+
+    fun toDomain(): Message {
+        val addresses = destinations.map { RecipientEmailAddress(it) }
+        return Message(MessageTitle(title), MessageBody(body), MessageDestinations.fromList(addresses))
+    }
 }
 
 @Repository
@@ -29,6 +43,17 @@ class RabbitMqMessageRepository(private val template: RabbitTemplate, private va
         val dto = PublishMessageDTO.fromDomain(message)
         val message = jacksonObjectMapper().writeValueAsString(dto)
         template.convertAndSend(queue.name, message)
+    }
+}
+
+@Component
+@RabbitListener(queues = ["q.notification"])
+class RabbitMqMessageReceiver(private val messageReceiveHandler: MessageReceiveHandler) {
+    @RabbitHandler
+    fun receive(message: String) {
+        val messageDTO = jacksonObjectMapper().readValue<PublishMessageDTO>(message)
+        val message = messageDTO.toDomain()
+        messageReceiveHandler.handle(message)
     }
 }
 
