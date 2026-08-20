@@ -52,6 +52,10 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-flyway")
     implementation("org.flywaydb:flyway-database-postgresql")
     testImplementation("org.springframework.boot:spring-boot-starter-flyway-test")
+
+    // RabbitMQ
+    implementation("org.springframework.boot:spring-boot-starter-amqp")
+    testImplementation("org.springframework.boot:spring-boot-starter-amqp-test")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.

@@ -2,6 +2,7 @@ package org.example.domain.service
 
 import org.example.domain.errors.DataConflictedException
 import org.example.domain.errors.DataNotFoundException
+import org.example.domain.model.ApplicationId
 import org.example.domain.model.Recipient
 import org.example.domain.model.RecipientEmailAddress
 import org.example.domain.model.RecipientId
@@ -31,6 +32,10 @@ class RecipientSearchService(private val recipientQuery: RecipientQuery) {
 
     fun fuzzyFindRecipientsByRecipientName(recipientName: RecipientName): List<Recipient> {
         return recipientQuery.fuzzyFindRecipientsByRecipientName(recipientName)
+    }
+
+    fun findRecipientsByApplicationId(applicationId: ApplicationId): List<Recipient> {
+        return recipientQuery.findRecipientsByApplicationId(applicationId)
     }
 }
 

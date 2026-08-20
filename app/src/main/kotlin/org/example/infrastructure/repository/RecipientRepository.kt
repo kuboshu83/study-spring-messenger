@@ -1,10 +1,7 @@
 package org.example.infrastructure.repository
 
 import org.apache.ibatis.annotations.Mapper
-import org.example.domain.model.Recipient
-import org.example.domain.model.RecipientEmailAddress
-import org.example.domain.model.RecipientId
-import org.example.domain.model.RecipientName
+import org.example.domain.model.*
 import org.example.domain.repository.RecipientCommand
 import org.example.domain.repository.RecipientQuery
 import org.springframework.stereotype.Repository
@@ -46,6 +43,10 @@ class RecipientQueryImpl(private val recipientQueryDAO: RecipientQueryDAO) : Rec
     override fun fuzzyFindRecipientsByRecipientName(recipientName: RecipientName): List<Recipient> {
         return recipientQueryDAO.fuzzyFindRecipientsByRecipientName(recipientName.value).map { it.toRecipient() }
     }
+
+    override fun findRecipientsByApplicationId(applicationId: ApplicationId): List<Recipient> {
+        return recipientQueryDAO.findRecipientsByApplicationId(applicationId.value).map { it.toRecipient() }
+    }
 }
 
 data class RecipientDTO(val id: String, val name: String, val email: String, val locked: Boolean) {
@@ -72,6 +73,7 @@ interface RecipientQueryDAO {
     fun findByEmail(email: String): RecipientDTO?
     fun findRecipientsByRecipientIds(recipientIds: List<String>): List<RecipientDTO>
     fun fuzzyFindRecipientsByRecipientName(recipientName: String): List<RecipientDTO>
+    fun findRecipientsByApplicationId(applicationId: String): List<RecipientDTO>
 }
 
 @Mapper
