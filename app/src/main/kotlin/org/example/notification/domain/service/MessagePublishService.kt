@@ -6,8 +6,11 @@ import org.example.notification.domain.model.Message
 import org.example.notification.domain.model.MessageBody
 import org.example.notification.domain.model.MessageTitle
 import org.example.notification.domain.model.UniqueMessageDestinationCollection
-import org.example.notification.domain.repository.MessagePublisher
 import org.springframework.stereotype.Service
+
+interface MessagePublisher {
+    fun publish(message: Message)
+}
 
 @Service
 class MessagePublishService(
