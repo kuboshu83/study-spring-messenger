@@ -1,7 +1,7 @@
 package org.example.notification.domain.service
 
-import org.example.domain.model.ApplicationId
-import org.example.domain.service.RecipientSearchService
+import org.example.manager.domain.model.ApplicationId
+import org.example.manager.domain.service.RecipientSearchService
 import org.example.notification.domain.model.Message
 import org.example.notification.domain.model.MessageBody
 import org.example.notification.domain.model.MessageDestinations

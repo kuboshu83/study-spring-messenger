@@ -1,9 +1,9 @@
-package org.example.infrastructure.repository
+package org.example.manager.infrastructure.repository
 
 import org.apache.ibatis.annotations.Mapper
-import org.example.domain.model.*
-import org.example.domain.repository.RecipientCommand
-import org.example.domain.repository.RecipientQuery
+import org.example.manager.domain.model.*
+import org.example.manager.domain.repository.RecipientCommand
+import org.example.manager.domain.repository.RecipientQuery
 import org.springframework.stereotype.Repository
 
 @Repository

@@ -1,4 +1,4 @@
-package org.example.domain.errors
+package org.example.manager.domain.errors
 
 class TooLongException(message: String, cause: Throwable? = null) : Exception(message, cause)
 

@@ -1,6 +1,6 @@
 package org.example.notification.infrastructure
 
-import org.example.domain.model.RecipientEmailAddress
+import org.example.manager.domain.model.RecipientEmailAddress
 import org.example.notification.domain.model.Message
 import org.example.notification.domain.model.MessageBody
 import org.example.notification.domain.model.MessageDestinations

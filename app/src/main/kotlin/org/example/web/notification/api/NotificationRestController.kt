@@ -1,6 +1,6 @@
 package org.example.web.notification.api
 
-import org.example.domain.model.ApplicationId
+import org.example.manager.domain.model.ApplicationId
 import org.example.notification.domain.model.MessageBody
 import org.example.notification.domain.model.MessageTitle
 import org.example.notification.domain.service.MessagePublishService

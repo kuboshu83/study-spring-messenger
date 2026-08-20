@@ -1,6 +1,6 @@
-package org.example.domain.repository
+package org.example.manager.domain.repository
 
-import org.example.domain.model.*
+import org.example.manager.domain.model.*
 
 interface RecipientCommand {
     fun save(recipient: Recipient)

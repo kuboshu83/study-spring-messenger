@@ -1,8 +1,8 @@
-package org.example.domain.repository
+package org.example.manager.domain.repository
 
-import org.example.domain.model.Group
-import org.example.domain.model.GroupId
-import org.example.domain.model.GroupName
+import org.example.manager.domain.model.Group
+import org.example.manager.domain.model.GroupId
+import org.example.manager.domain.model.GroupName
 
 interface GroupQuery {
     fun findAll(): List<Group>

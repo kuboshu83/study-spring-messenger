@@ -1,14 +1,10 @@
-package org.example.domain.service
+package org.example.manager.domain.service
 
-import org.example.domain.errors.DataConflictedException
-import org.example.domain.errors.DataNotFoundException
-import org.example.domain.model.ApplicationId
-import org.example.domain.model.Recipient
-import org.example.domain.model.RecipientEmailAddress
-import org.example.domain.model.RecipientId
-import org.example.domain.model.RecipientName
-import org.example.domain.repository.RecipientCommand
-import org.example.domain.repository.RecipientQuery
+import org.example.manager.domain.errors.DataConflictedException
+import org.example.manager.domain.errors.DataNotFoundException
+import org.example.manager.domain.model.*
+import org.example.manager.domain.repository.RecipientCommand
+import org.example.manager.domain.repository.RecipientQuery
 import org.springframework.stereotype.Service
 
 @Service

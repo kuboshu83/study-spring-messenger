@@ -1,6 +1,6 @@
-package org.example.domain.model
+package org.example.manager.domain.model
 
-import org.example.domain.errors.TooLongException
+import org.example.manager.domain.errors.TooLongException
 import java.util.*
 
 @ConsistentCopyVisibility

@@ -1,13 +1,13 @@
-package org.example.domain.service
+package org.example.manager.domain.service
 
-import org.example.domain.errors.DataConflictedException
-import org.example.domain.errors.DataNotFoundException
-import org.example.domain.model.Description
-import org.example.domain.model.Group
-import org.example.domain.model.GroupId
-import org.example.domain.model.GroupName
-import org.example.domain.repository.GroupCommand
-import org.example.domain.repository.GroupQuery
+import org.example.manager.domain.errors.DataConflictedException
+import org.example.manager.domain.errors.DataNotFoundException
+import org.example.manager.domain.model.Description
+import org.example.manager.domain.model.Group
+import org.example.manager.domain.model.GroupId
+import org.example.manager.domain.model.GroupName
+import org.example.manager.domain.repository.GroupCommand
+import org.example.manager.domain.repository.GroupQuery
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 

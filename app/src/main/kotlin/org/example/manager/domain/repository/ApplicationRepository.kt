@@ -1,8 +1,8 @@
-package org.example.domain.repository
+package org.example.manager.domain.repository
 
-import org.example.domain.model.Application
-import org.example.domain.model.ApplicationId
-import org.example.domain.model.ApplicationName
+import org.example.manager.domain.model.Application
+import org.example.manager.domain.model.ApplicationId
+import org.example.manager.domain.model.ApplicationName
 
 interface ApplicationCommand {
     fun save(application: Application)

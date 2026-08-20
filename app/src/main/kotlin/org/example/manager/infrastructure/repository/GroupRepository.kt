@@ -1,9 +1,9 @@
-package org.example.infrastructure.repository
+package org.example.manager.infrastructure.repository
 
 import org.apache.ibatis.annotations.Mapper
-import org.example.domain.model.*
-import org.example.domain.repository.GroupCommand
-import org.example.domain.repository.GroupQuery
+import org.example.manager.domain.model.*
+import org.example.manager.domain.repository.GroupCommand
+import org.example.manager.domain.repository.GroupQuery
 import org.springframework.stereotype.Repository
 
 @Repository

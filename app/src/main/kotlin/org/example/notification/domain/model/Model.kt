@@ -1,8 +1,8 @@
 package org.example.notification.domain.model
 
-import org.example.domain.errors.EmptyException
-import org.example.domain.errors.InvalidSizeException
-import org.example.domain.model.RecipientEmailAddress
+import org.example.manager.domain.errors.EmptyException
+import org.example.manager.domain.errors.InvalidSizeException
+import org.example.manager.domain.model.RecipientEmailAddress
 
 data class MessageTitle(val value: String) {
     companion object {

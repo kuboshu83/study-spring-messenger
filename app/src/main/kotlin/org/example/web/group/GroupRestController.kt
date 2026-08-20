@@ -1,8 +1,8 @@
 package org.example.web.group
 
-import org.example.domain.model.Group
-import org.example.domain.model.GroupName
-import org.example.domain.service.GroupSearchService
+import org.example.manager.domain.model.Group
+import org.example.manager.domain.model.GroupName
+import org.example.manager.domain.service.GroupSearchService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam

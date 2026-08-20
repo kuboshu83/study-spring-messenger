@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.example.infrastructure.repository.RecipientQueryDAO">
-    <select id="findAll" resultType="org.example.infrastructure.repository.RecipientDTO">
+<mapper namespace="org.example.manager.infrastructure.repository.RecipientQueryDAO">
+    <select id="findAll" resultType="org.example.manager.infrastructure.repository.RecipientDTO">
         SELECT id, name, email, locked FROM recipients
     </select>
 
-    <select id="findByRecipientId" resultType="org.example.infrastructure.repository.RecipientDTO">
+    <select id="findByRecipientId" resultType="org.example.manager.infrastructure.repository.RecipientDTO">
         SELECT id, name, email, locked FROM recipients WHERE id=CAST(#{recipientId} AS uuid)
     </select>
 
-    <select id="findByEmail" resultType="org.example.infrastructure.repository.RecipientDTO">
+    <select id="findByEmail" resultType="org.example.manager.infrastructure.repository.RecipientDTO">
         SELECT id, name, email, locked FROM recipients WHERE email=#{email}
     </select>
 
-    <select id="findRecipientsByRecipientIds" resultType="org.example.infrastructure.repository.RecipientDTO">
+    <select id="findRecipientsByRecipientIds" resultType="org.example.manager.infrastructure.repository.RecipientDTO">
         SELECT id, name, email, locked FROM recipients
         WHERE id IN
         <foreach collection="recipientIds" item="recipientId" separator="," open="(" close=")">
@@ -21,11 +21,12 @@
         </foreach>
     </select>
 
-    <select id="fuzzyFindRecipientsByRecipientName" resultType="org.example.infrastructure.repository.RecipientDTO">
+    <select id="fuzzyFindRecipientsByRecipientName"
+            resultType="org.example.manager.infrastructure.repository.RecipientDTO">
         SELECT id, name, email, locked FROM recipients WHERE name LIKE CONCAT('%', #{recipientName}, '%')
     </select>
 
-    <select id="findRecipientsByApplicationId" resultType="org.example.infrastructure.repository.RecipientDTO">
+    <select id="findRecipientsByApplicationId" resultType="org.example.manager.infrastructure.repository.RecipientDTO">
         SELECT
         C.id,
         C.name,

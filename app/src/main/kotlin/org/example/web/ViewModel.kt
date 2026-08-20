@@ -1,8 +1,8 @@
 package org.example.web
 
-import org.example.domain.model.Application
-import org.example.domain.model.Group
-import org.example.domain.model.Recipient
+import org.example.manager.domain.model.Application
+import org.example.manager.domain.model.Group
+import org.example.manager.domain.model.Recipient
 
 @ConsistentCopyVisibility
 data class GroupViewModel private constructor(

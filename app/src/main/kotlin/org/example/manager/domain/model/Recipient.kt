@@ -1,8 +1,8 @@
-package org.example.domain.model
+package org.example.manager.domain.model
 
-import org.example.domain.errors.InvalidFormatException
-import org.example.domain.errors.NotAllowedDomainException
-import org.example.domain.errors.TooLongException
+import org.example.manager.domain.errors.InvalidFormatException
+import org.example.manager.domain.errors.NotAllowedDomainException
+import org.example.manager.domain.errors.TooLongException
 
 @ConsistentCopyVisibility
 data class RecipientId private constructor(private val id: Id) {

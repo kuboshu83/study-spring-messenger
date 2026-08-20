@@ -1,8 +1,8 @@
 package org.example.web.recipient
 
-import org.example.domain.model.Recipient
-import org.example.domain.model.RecipientName
-import org.example.domain.service.RecipientSearchService
+import org.example.manager.domain.model.Recipient
+import org.example.manager.domain.model.RecipientName
+import org.example.manager.domain.service.RecipientSearchService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam

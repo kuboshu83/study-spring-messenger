@@ -1,13 +1,13 @@
 package org.example.web.recipient
 
-import org.example.domain.model.Recipient
-import org.example.domain.model.RecipientEmailAddress
-import org.example.domain.model.RecipientId
-import org.example.domain.model.RecipientName
-import org.example.domain.service.RecipientCreateService
-import org.example.domain.service.RecipientDeleteService
-import org.example.domain.service.RecipientSearchService
-import org.example.domain.service.RecipientUpdateService
+import org.example.manager.domain.model.Recipient
+import org.example.manager.domain.model.RecipientEmailAddress
+import org.example.manager.domain.model.RecipientId
+import org.example.manager.domain.model.RecipientName
+import org.example.manager.domain.service.RecipientCreateService
+import org.example.manager.domain.service.RecipientDeleteService
+import org.example.manager.domain.service.RecipientSearchService
+import org.example.manager.domain.service.RecipientUpdateService
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping

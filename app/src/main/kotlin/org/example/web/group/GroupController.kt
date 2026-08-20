@@ -1,7 +1,7 @@
 package org.example.web.group
 
-import org.example.domain.model.*
-import org.example.domain.service.*
+import org.example.manager.domain.model.*
+import org.example.manager.domain.service.*
 import org.example.web.GroupViewModel
 import org.example.web.RecipientViewModel
 import org.springframework.stereotype.Controller

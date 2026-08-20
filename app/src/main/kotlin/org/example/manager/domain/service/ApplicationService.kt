@@ -1,13 +1,13 @@
-package org.example.domain.service
+package org.example.manager.domain.service
 
-import org.example.domain.errors.DataConflictedException
-import org.example.domain.errors.DataNotFoundException
-import org.example.domain.model.Application
-import org.example.domain.model.ApplicationId
-import org.example.domain.model.ApplicationName
-import org.example.domain.model.Description
-import org.example.domain.repository.ApplicationCommand
-import org.example.domain.repository.ApplicationQuery
+import org.example.manager.domain.errors.DataConflictedException
+import org.example.manager.domain.errors.DataNotFoundException
+import org.example.manager.domain.model.Application
+import org.example.manager.domain.model.ApplicationId
+import org.example.manager.domain.model.ApplicationName
+import org.example.manager.domain.model.Description
+import org.example.manager.domain.repository.ApplicationCommand
+import org.example.manager.domain.repository.ApplicationQuery
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 

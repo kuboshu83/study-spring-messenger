@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.example.infrastructure.repository.ApplicationGroupCommandDAO">
-    <insert id="save" parameterType="org.example.infrastructure.repository.ApplicationGroupRegistrationDTO">
+<mapper namespace="org.example.manager.infrastructure.repository.ApplicationGroupCommandDAO">
+    <insert id="save" parameterType="org.example.manager.infrastructure.repository.ApplicationGroupRegistrationDTO">
         INSERT INTO applications_groups (application_id, group_id)
         VALUES
         <foreach collection="registrations" item="registration" separator=",">
@@ -9,7 +9,7 @@
         </foreach>
     </insert>
 
-    <delete id="delete" parameterType="org.example.infrastructure.repository.ApplicationGroupRegistrationDTO">
+    <delete id="delete" parameterType="org.example.manager.infrastructure.repository.ApplicationGroupRegistrationDTO">
         DELETE FROM applications_groups
         WHERE
         <foreach collection="registrations" item="registration" separator="OR">
