@@ -9,13 +9,13 @@ import org.example.notification.domain.service.MessagePublisher
 import org.example.notification.domain.service.MessageReceiveHandler
 import org.springframework.amqp.core.Queue
 import org.springframework.amqp.core.QueueBuilder
-import org.springframework.amqp.rabbit.annotation.RabbitHandler
 import org.springframework.amqp.rabbit.annotation.RabbitListener
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Component
 import org.springframework.stereotype.Repository
+import tools.jackson.databind.ObjectMapper
 import tools.jackson.module.kotlin.jacksonObjectMapper
 import tools.jackson.module.kotlin.readValue
 
@@ -48,11 +48,17 @@ class RabbitMqMessagePublisher(private val template: RabbitTemplate, private val
 
 @Component
 @RabbitListener(queues = ["q.notification"])
-class RabbitMqMessageReceiver(private val messageReceiveHandler: MessageReceiveHandler) {
-    @RabbitHandler
+class RabbitMqMessageReceiver(
+    private val messageReceiveHandler: MessageReceiveHandler,
+    private val objectMapper: ObjectMapper
+) {
     fun receive(message: String) {
-        val messageDTO = jacksonObjectMapper().readValue<MessagePayloadDTO>(message)
+        // TODO: メッセージの復元エラー(IllegalArgumentException)は即DLQ行き
+        val messageDTO = objectMapper.readValue<MessagePayloadDTO>(message)
         val message = messageDTO.toDomain()
+
+        // TODO: ハンドラー(主に通知)エラーはリトライしてからDLQ行き
+        // リトライ回数はパラメータで渡せるようにする
         messageReceiveHandler.handle(message)
     }
 }
