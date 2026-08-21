@@ -43,7 +43,7 @@ class RabbitMqMessagePublisher(private val template: RabbitTemplate, private val
         val dto = MessagePayloadDTO.fromDomain(message)
         val message = jacksonObjectMapper().writeValueAsString(dto)
 
-        // TODO: RabbitMQへ送信中にエラーが発生したらリトライする
+        // TODO: RabbitMQへ送信中にエラーが発生したらリトライする(リトライは呼び出し側で行うようにする)
         // TODO: リトライ回数はパラメータで設定できるようにする。
         template.convertAndSend(queue.name, message)
     }
