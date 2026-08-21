@@ -7,16 +7,15 @@ import org.example.notification.domain.model.MessageTitle
 import org.example.notification.domain.model.UniqueMessageDestinationCollection
 import org.example.notification.domain.service.MessagePublisher
 import org.example.notification.domain.service.MessageReceiveHandler
-import org.springframework.amqp.core.Queue
-import org.springframework.amqp.core.QueueBuilder
+import org.springframework.amqp.core.*
+import org.springframework.amqp.rabbit.annotation.RabbitHandler
 import org.springframework.amqp.rabbit.annotation.RabbitListener
 import org.springframework.amqp.rabbit.core.RabbitTemplate
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Component
-import org.springframework.stereotype.Repository
 import tools.jackson.databind.ObjectMapper
-import tools.jackson.module.kotlin.jacksonObjectMapper
 import tools.jackson.module.kotlin.readValue
 
 data class MessagePayloadDTO(val title: String, val body: String, val destinations: List<String>) {
@@ -36,16 +35,20 @@ data class MessagePayloadDTO(val title: String, val body: String, val destinatio
     }
 }
 
-@Repository
-class RabbitMqMessagePublisher(private val template: RabbitTemplate, private val queue: Queue) :
+@Component
+class RabbitMqMessagePublisher(
+    private val template: RabbitTemplate,
+    private val objectMapper: ObjectMapper,
+    @param:Qualifier("notificationExchange") private val direct: DirectExchange
+) :
     MessagePublisher {
     override fun publish(message: Message) {
         val dto = MessagePayloadDTO.fromDomain(message)
-        val message = jacksonObjectMapper().writeValueAsString(dto)
+        val message = objectMapper.writeValueAsString(dto)
 
         // TODO: RabbitMQへ送信中にエラーが発生したらリトライする(リトライは呼び出し側で行うようにする)
         // TODO: リトライ回数はパラメータで設定できるようにする。
-        template.convertAndSend(queue.name, message)
+        template.convertAndSend(direct.name, "", message)
     }
 }
 
@@ -55,6 +58,7 @@ class RabbitMqMessageReceiver(
     private val messageReceiveHandler: MessageReceiveHandler,
     private val objectMapper: ObjectMapper
 ) {
+    @RabbitHandler
     fun receive(message: String) {
         // TODO: メッセージの復元エラー(IllegalArgumentException)は即DLQ行き
         val messageDTO = objectMapper.readValue<MessagePayloadDTO>(message)
@@ -69,8 +73,21 @@ class RabbitMqMessageReceiver(
 @Configuration
 class RabbitMqConfig {
     @Bean
-    fun queue(): Queue {
+    fun notificationExchange(): DirectExchange {
+        return DirectExchange("ex.notification")
+    }
+
+    @Bean
+    fun notificationQueue(): Queue {
         return QueueBuilder.durable("q.notification").quorum().build()
+    }
+
+    @Bean
+    fun binding(
+        @Qualifier("notificationExchange") direct: DirectExchange,
+        @Qualifier("notificationQueue") queue: Queue
+    ): Binding {
+        return BindingBuilder.bind(queue).to(direct).with("")
     }
 
     // TODO: Dead-Letter-Queueの設定
