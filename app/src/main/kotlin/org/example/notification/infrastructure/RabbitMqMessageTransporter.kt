@@ -8,7 +8,6 @@ import org.example.notification.domain.model.UniqueMessageDestinationCollection
 import org.example.notification.domain.service.MessagePublisher
 import org.example.notification.domain.service.MessageReceiveHandler
 import org.springframework.amqp.core.*
-import org.springframework.amqp.rabbit.annotation.RabbitHandler
 import org.springframework.amqp.rabbit.annotation.RabbitListener
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.beans.factory.annotation.Qualifier
@@ -53,12 +52,11 @@ class RabbitMqMessagePublisher(
 }
 
 @Component
-@RabbitListener(queues = ["q.notification"])
 class RabbitMqMessageReceiver(
     private val messageReceiveHandler: MessageReceiveHandler,
     private val objectMapper: ObjectMapper
 ) {
-    @RabbitHandler
+    @RabbitListener(queues = ["q.notification"])
     fun receive(message: String) {
         // TODO: メッセージの復元エラー(IllegalArgumentException)は即DLQ行き
         val messageDTO = objectMapper.readValue<MessagePayloadDTO>(message)
@@ -79,7 +77,7 @@ class RabbitMqConfig {
 
     @Bean
     fun notificationQueue(): Queue {
-        return QueueBuilder.durable("q.notification").quorum().build()
+        return QueueBuilder.durable("q.notification").quorum().deadLetterExchange("ex.dlx.notification").build()
     }
 
     @Bean
@@ -90,5 +88,21 @@ class RabbitMqConfig {
         return BindingBuilder.bind(queue).to(direct).with("")
     }
 
-    // TODO: Dead-Letter-Queueの設定
+    @Bean
+    fun deadLetterQueue(): Queue {
+        return QueueBuilder.durable("q.dlx.notification").quorum().build()
+    }
+
+    @Bean
+    fun deadLetterExchange(): DirectExchange {
+        return DirectExchange("ex.dlx.notification")
+    }
+
+    @Bean
+    fun bindingDeadLetterQueue(
+        @Qualifier("deadLetterQueue") queue: Queue,
+        @Qualifier("deadLetterExchange") exchange: DirectExchange
+    ): Binding {
+        return BindingBuilder.bind(queue).to(exchange).with("")
+    }
 }
