@@ -1,6 +1,11 @@
 package org.example.notification.domain.service
 
+import org.example.notification.domain.errors.NotifyException
+import org.example.notification.domain.model.MailProperties
 import org.example.notification.domain.model.Message
+import org.springframework.mail.MailSendException
+import org.springframework.mail.SimpleMailMessage
+import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.stereotype.Component
 
 interface MessageNotificator {
@@ -8,8 +13,24 @@ interface MessageNotificator {
 }
 
 @Component
-class ConsoleMessageNotificator : MessageNotificator {
+class MailMessageNotificator(private val properties: MailProperties, private val mailSender: JavaMailSender) :
+    MessageNotificator {
+
     override fun notify(message: Message) {
-        println(message)
+        val destinations = message.destinations.toSet().map { it.value }.toTypedArray()
+
+        val mail = SimpleMailMessage().also { m ->
+            m.subject = message.title.value
+            m.setTo(*destinations)
+            m.from = properties.mailFrom.value
+            m.text = message.body.value
+        }
+
+        try {
+            mailSender.send(mail)
+        } catch (ex: MailSendException) {
+            // TODO: 送信失敗時のみリトライして、他の場合はキャッチせずにDLX行き
+            throw NotifyException("failed to send mail: ${ex.message}", ex)
+        }
     }
 }

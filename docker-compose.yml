@@ -29,6 +29,15 @@ services:
     networks:
       - dev-nw
 
+  mail:
+    image: axllent/mailpit:v1.30
+    container_name: mail
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    networks:
+      - dev-nw
+
 volumes:
   db-data:
   mq-data:

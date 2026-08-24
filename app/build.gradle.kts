@@ -56,6 +56,10 @@ dependencies {
     // RabbitMQ
     implementation("org.springframework.boot:spring-boot-starter-amqp")
     testImplementation("org.springframework.boot:spring-boot-starter-amqp-test")
+
+    // Mail
+    implementation("org.springframework.boot:spring-boot-starter-mail")
+    implementation("org.springframework.boot:spring-boot-starter-mail-test")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.

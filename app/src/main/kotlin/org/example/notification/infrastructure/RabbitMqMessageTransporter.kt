@@ -1,5 +1,6 @@
 package org.example.notification.infrastructure
 
+
 import org.example.manager.domain.model.RecipientEmailAddress
 import org.example.notification.domain.model.Message
 import org.example.notification.domain.model.MessageBody
@@ -9,7 +10,11 @@ import org.example.notification.domain.service.MessagePublisher
 import org.example.notification.domain.service.MessageReceiveHandler
 import org.springframework.amqp.core.*
 import org.springframework.amqp.rabbit.annotation.RabbitListener
+import org.springframework.amqp.rabbit.config.RetryInterceptorBuilder
+import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory
+import org.springframework.amqp.rabbit.connection.ConnectionFactory
 import org.springframework.amqp.rabbit.core.RabbitTemplate
+import org.springframework.amqp.rabbit.retry.RejectAndDontRequeueRecoverer
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -70,6 +75,22 @@ class RabbitMqMessageReceiver(
 
 @Configuration
 class RabbitMqConfig {
+    @Bean
+    fun rabbitListenerContainerFactory(connectionFactory: ConnectionFactory): SimpleRabbitListenerContainerFactory {
+        val factory = SimpleRabbitListenerContainerFactory().also { f ->
+            f.setConnectionFactory(connectionFactory)
+            f.setAdviceChain(
+                RetryInterceptorBuilder.stateless()
+                    .maxRetries(2)
+                    .backOffOptions(1000, 2.0, 5000)
+                    .recoverer(
+                        RejectAndDontRequeueRecoverer()
+                    ).build()
+            )
+        }
+        return factory
+    }
+
     @Bean
     fun notificationExchange(): DirectExchange {
         return DirectExchange("ex.notification")
