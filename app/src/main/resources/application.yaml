@@ -13,6 +13,19 @@ spring:
     password: change-me
     host: localhost
     port: 5672
+    listener:
+      simple:
+        default-requeue-rejected: false
+
+  mail:
+    host: localhost
+    port: 1025
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
 
 mybatis:
   mapper-locations: classpath:/mapper/*.xml
