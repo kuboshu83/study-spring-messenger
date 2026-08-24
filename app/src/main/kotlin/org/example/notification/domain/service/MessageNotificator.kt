@@ -12,13 +12,16 @@ interface MessageNotificator {
 
 class MailMessageNotificator(private val from: String, private val mailSender: JavaMailSender) : MessageNotificator {
     override fun notify(message: Message) {
-        val simpleMailMessage = SimpleMailMessage()
-        simpleMailMessage.subject = message.title.value
-        val destinations = message.destinations.toSet().map { it.value }
-        simpleMailMessage.setTo(*destinations.toTypedArray())
-        simpleMailMessage.from = from
-        simpleMailMessage.text = message.body.value
-        mailSender.send(simpleMailMessage)
+        val destinations = message.destinations.toSet().map { it.value }.toTypedArray()
+
+        val mail = SimpleMailMessage().also { m ->
+            m.subject = message.title.value
+            m.setTo(*destinations)
+            m.from = from
+            m.text = message.body.value
+        }
+
+        mailSender.send(mail)
     }
 }
 
@@ -30,10 +33,3 @@ class NotificationConfig {
         return MailMessageNotificator(from, mailSender)
     }
 }
-
-//@Component
-//class ConsoleMessageNotificator : MessageNotificator {
-//    override fun notify(message: Message) {
-//        println(message)
-//    }
-//}
