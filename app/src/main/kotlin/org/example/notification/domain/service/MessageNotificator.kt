@@ -1,6 +1,5 @@
 package org.example.notification.domain.service
 
-import org.example.notification.config.MailConfigurations
 import org.example.notification.domain.model.MailProperties
 import org.example.notification.domain.model.Message
 import org.springframework.mail.SimpleMailMessage
@@ -12,10 +11,8 @@ interface MessageNotificator {
 }
 
 @Component
-class MailMessageNotificator(mailConfigurations: MailConfigurations, private val mailSender: JavaMailSender) :
+class MailMessageNotificator(private val properties: MailProperties, private val mailSender: JavaMailSender) :
     MessageNotificator {
-
-    private val properties: MailProperties = mailConfigurations.toProperties()
 
     override fun notify(message: Message) {
         val destinations = message.destinations.toSet().map { it.value }.toTypedArray()
