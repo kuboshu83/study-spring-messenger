@@ -13,11 +13,12 @@ interface MessageNotificator {
 }
 
 @Component
-class MailMessageNotificator(private val configurations: MailConfigurations, private val mailSender: JavaMailSender) :
+class MailMessageNotificator(mailConfigurations: MailConfigurations, private val mailSender: JavaMailSender) :
     MessageNotificator {
-    override fun notify(message: Message) {
-        val properties = configurations.toProperties()
 
+    private val properties: MailProperties = mailConfigurations.toProperties()
+
+    override fun notify(message: Message) {
         val destinations = message.destinations.toSet().map { it.value }.toTypedArray()
 
         val mail = SimpleMailMessage().also { m ->
