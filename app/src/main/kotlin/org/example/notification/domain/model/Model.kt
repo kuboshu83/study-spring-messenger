@@ -83,3 +83,26 @@ data class Message(
     }
 }
 
+enum class AllowedSenderDomain(val value: String) {
+    EXAMPLE_ORG("example.org"),
+    EXAMPLE_COM("example.com");
+}
+
+data class SenderEmailAddress(val value: String) {
+    companion object {
+        private fun validate(address: String) {
+            for (entry in AllowedSenderDomain.entries) {
+                if (address.endsWith("@${entry.value}")) {
+                    return
+                }
+            }
+            throw IllegalArgumentException("not allowed address domain: address=$address")
+        }
+    }
+
+    init {
+        validate(value)
+    }
+}
+
+data class MailProperties(val mailFrom: SenderEmailAddress)

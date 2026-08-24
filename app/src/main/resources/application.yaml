@@ -31,3 +31,7 @@ mybatis:
   mapper-locations: classpath:/mapper/*.xml
   configuration:
     defaultStatementTimeout: 1
+
+messenger:
+  mail:
+    from: admin@example.org
