@@ -3,7 +3,6 @@ package org.example.manager.domain.model
 import org.example.manager.domain.errors.InvalidFormatException
 import org.example.manager.domain.errors.TooLongException
 
-@ConsistentCopyVisibility
 data class GroupId private constructor(private val id: Id) {
     companion object {
         fun createRandom(): GroupId {

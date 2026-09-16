@@ -69,6 +69,14 @@ java {
     }
 }
 
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.add("-Xjsr305=strict")
+        freeCompilerArgs.add("-Xconsistent-data-class-copy-visibility")
+    }
+}
+
+
 tasks.named<Test>("test") {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
