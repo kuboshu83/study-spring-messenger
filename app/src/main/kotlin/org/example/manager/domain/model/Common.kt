@@ -3,7 +3,6 @@ package org.example.manager.domain.model
 import org.example.manager.domain.errors.TooLongException
 import java.util.*
 
-@ConsistentCopyVisibility
 data class Id private constructor(private val uuid: UUID) {
     companion object {
         fun fromString(text: String): Id {

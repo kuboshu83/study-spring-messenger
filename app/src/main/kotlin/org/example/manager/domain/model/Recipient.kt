@@ -4,7 +4,6 @@ import org.example.manager.domain.errors.InvalidFormatException
 import org.example.manager.domain.errors.NotAllowedDomainException
 import org.example.manager.domain.errors.TooLongException
 
-@ConsistentCopyVisibility
 data class RecipientId private constructor(private val id: Id) {
     companion object {
         fun fromString(text: String): RecipientId {
