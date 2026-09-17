@@ -9,14 +9,21 @@ class UtilsTest : DescribeSpec({
         val dots = "..."
         describe("正常系") {
             context("入力された文字列が指定サイズ以内の場合") {
+                val size = 10
                 it("入力された文字列をそのまま返す") {
                     // arrange
                     val text = "a".repeat(10)
-                    val size = 10
                     // act
                     val result = ellipsize(text, size)
                     // assert
                     result.shouldBe(text)
+                }
+
+                it("空文字が入力されたら空文字をそのまま返す") {
+                    // act
+                    val result = ellipsize("", size)
+                    // assert
+                    result.shouldBe("")
                 }
             }
 
