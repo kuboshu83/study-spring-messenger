@@ -1,6 +1,6 @@
 package org.example.manager.domain.model
 
-import org.example.manager.domain.errors.TooLongException
+import org.example.utils.ellipsize
 import java.util.*
 
 data class Id private constructor(private val uuid: UUID) {
@@ -18,14 +18,30 @@ data class Id private constructor(private val uuid: UUID) {
         get() = uuid.toString()
 }
 
-data class Description(val value: String) {
+
+data class Description private constructor(val value: String) {
     companion object {
-        private const val MAX_SIZE = 100
+        private const val MAX_LENGTH = 100
+
+        // 設定サイズ以上の文字列が入力されたら例外をスローする。
+        fun of(text: String): Description {
+            return Description(text)
+        }
+
+        // 設定サイズ以上の文字列が入力されたら、文字列を切り詰めてインスタンスを生成する。
+        fun truncatedOf(text: String): Description {
+            val value = if (text.length > MAX_LENGTH) {
+                ellipsize(text, MAX_LENGTH)
+            } else {
+                text
+            }
+            return Description(value)
+        }
     }
 
     init {
-        if (value.length > MAX_SIZE) {
-            throw TooLongException("description is too long: limitSize=$MAX_SIZE, actual=${value.length}")
+        require(value.length <= MAX_LENGTH) {
+            "description is too long: limit=${MAX_LENGTH} actual=${value.length}"
         }
     }
 }
