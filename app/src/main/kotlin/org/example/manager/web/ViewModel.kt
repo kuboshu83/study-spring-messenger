@@ -4,7 +4,6 @@ import org.example.manager.domain.model.Application
 import org.example.manager.domain.model.Group
 import org.example.manager.domain.model.Recipient
 
-@ConsistentCopyVisibility
 data class GroupViewModel private constructor(
     val id: String,
     val name: String,
@@ -25,7 +24,6 @@ data class GroupViewModel private constructor(
     }
 }
 
-@ConsistentCopyVisibility
 data class RecipientViewModel private constructor(
     val id: String,
     val name: String,
@@ -39,7 +37,6 @@ data class RecipientViewModel private constructor(
     }
 }
 
-@ConsistentCopyVisibility
 data class ApplicationViewModel private constructor(
     val id: String,
     val name: String,
