@@ -1,4 +1,4 @@
-package org.example.web.manager.recipient
+package org.example.manager.web.recipient
 
 data class NewRecipientForm(var name: String = "", var email: String = "")
 

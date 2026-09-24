@@ -1,4 +1,4 @@
-package org.example.web.manager.recipient.application
+package org.example.manager.web.application
 
 data class ApplicationCreationForm(var name: String = "", var description: String = "")
 

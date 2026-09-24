@@ -1,4 +1,4 @@
-package org.example.web.manager.group
+package org.example.manager.web.group
 
 data class NewGroupForm(var name: String = "", var description: String = "")
 
