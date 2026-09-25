@@ -1,8 +1,6 @@
 package org.example.manager.domain.model
 
-import org.example.manager.domain.errors.InvalidFormatException
 import org.example.manager.domain.errors.NotAllowedDomainException
-import org.example.manager.domain.errors.TooLongException
 
 data class RecipientId private constructor(private val id: Id) {
     companion object {
@@ -23,19 +21,15 @@ data class RecipientName(val value: String) {
     companion object {
         private val VALID_PATTERN = Regex("""^[a-z]+-?[a-z]+$""")
         private const val MAX_SIZE = 20
-
-        fun validate(name: String) {
-            if (name.length > MAX_SIZE) {
-                throw TooLongException("recipient name is too long: limitSize=$MAX_SIZE, actual=${name.length}")
-            }
-            if (!VALID_PATTERN.matches(name)) {
-                throw InvalidFormatException("recipient name format is invalid: name='$name'")
-            }
-        }
     }
 
     init {
-        validate(value)
+        require(value.length <= MAX_SIZE) {
+            "recipient name is too long: limitSize=$MAX_SIZE, actual=${value.length}"
+        }
+        require(VALID_PATTERN.matches(value)) {
+            "recipient name format is invalid: name='$value'"
+        }
     }
 }
 

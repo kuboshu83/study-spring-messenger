@@ -1,7 +1,6 @@
 package org.example.manager.domain.model
 
-import org.example.manager.domain.errors.InvalidFormatException
-import org.example.manager.domain.errors.TooLongException
+import org.example.utils.ellipsize
 
 data class ApplicationId private constructor(val id: Id) {
     companion object {
@@ -22,19 +21,15 @@ data class ApplicationName(val value: String) {
     companion object {
         private val VALID_PATTERN = Regex("""^[a-z]+ ?[a-z]+$""")
         private const val MAX_SIZE = 20
-
-        fun validate(name: String) {
-            if (name.length > MAX_SIZE) {
-                throw TooLongException("application name is too long: limitSize=$MAX_SIZE, actual=${name.length}")
-            }
-            if (!VALID_PATTERN.matches(name)) {
-                throw InvalidFormatException("application name format is invalid: name='$name'")
-            }
-        }
     }
 
     init {
-        validate(value)
+        require(value.length <= MAX_SIZE) {
+            "application name is too long: limitSize=$MAX_SIZE, actual=${value.length}"
+        }
+        require(VALID_PATTERN.matches(value)) {
+            "application name is invalid format: name='${ellipsize(value)}'"
+        }
     }
 }
 
