@@ -1,6 +1,8 @@
 package org.example.manager.domain.errors
 
-class NotAllowedDomainException(message: String, cause: Throwable? = null) : RuntimeException(message, cause)
+open class BusinessException(message: String, cause: Throwable? = null) : RuntimeException(message, cause)
+
+class NotAllowedEmailDomainException(message: String, cause: Throwable? = null) : BusinessException(message, cause)
 
 class DataConflictedException(message: String, cause: Throwable? = null) : RuntimeException(message, cause)
 

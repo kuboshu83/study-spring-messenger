@@ -34,7 +34,7 @@ data class MessagePayloadDTO(val title: String, val body: String, val destinatio
     }
 
     fun toDomain(): Message {
-        val addresses = destinations.map { RecipientEmailAddress(it) }
+        val addresses = destinations.map { RecipientEmailAddress.of(it) }
         return Message(MessageTitle(title), MessageBody(body), UniqueMessageDestinationCollection.fromList(addresses))
     }
 }

@@ -1,7 +1,8 @@
 package org.example.manager.domain.model
 
+import org.example.common.domain.EmailAddress
 import org.example.common.domain.Id
-import org.example.manager.domain.errors.NotAllowedDomainException
+import org.example.manager.domain.errors.NotAllowedEmailDomainException
 
 data class RecipientId private constructor(private val id: Id) {
     companion object {
@@ -18,45 +19,50 @@ data class RecipientId private constructor(private val id: Id) {
         get() = id.value
 }
 
+// ユーザ名は他システムの仕様に合わせてアルファベットの小文字とハイフンのみで構成する
+// 例) tanaka-ichiro, john
 data class RecipientName(val value: String) {
     companion object {
-        private val VALID_PATTERN = Regex("""^[a-z]+-?[a-z]+$""")
-        private const val MAX_SIZE = 20
+        private val VALID_PATTERN = Regex("""^[a-z]+(-[a-z]+)?$""")
+        private const val MAX_LENGTH = 20
     }
 
     init {
-        require(value.length <= MAX_SIZE) {
-            "recipient name is too long: limitSize=$MAX_SIZE, actual=${value.length}"
+        require(value.length <= MAX_LENGTH) {
+            "recipient name is too long: maxLength=$MAX_LENGTH, length=${value.length}"
         }
         require(VALID_PATTERN.matches(value)) {
-            "recipient name format is invalid: name='$value'"
+            "recipient name is invalid format: name='$value'"
         }
     }
 }
 
-enum class AllowedRecipientDomain(val value: String) {
-    EXAMPLE_ORG("example.org"),
-    EXAMPLE_COM("example.com");
-}
+data class RecipientEmailAddress private constructor(val address: EmailAddress) {
+    val value: String
+        get() = address.value
 
-data class RecipientEmailAddress(val value: String) {
     companion object {
-        fun validate(address: String) {
-            for (entry in AllowedRecipientDomain.entries) {
-                if (address.endsWith(entry.value)) {
-                    return
-                }
-            }
-            throw NotAllowedDomainException("specified mail domain is not allowed: $address")
+        private val allowedDomain = listOf("example.com", "example.org")
+
+        fun of(text: String): RecipientEmailAddress {
+            val address = EmailAddress(text)
+            return RecipientEmailAddress(address)
         }
     }
 
     init {
-        validate(value)
+        if (!allowedDomain.contains(address.domain)) {
+            throw NotAllowedEmailDomainException("not allowed domain: $address")
+        }
     }
 }
 
-class Recipient(val id: RecipientId, val name: RecipientName, val email: RecipientEmailAddress, val locked: Boolean) {
+class Recipient(
+    val id: RecipientId,
+    val name: RecipientName,
+    val email: RecipientEmailAddress,
+    val locked: Boolean
+) {
     companion object {
         fun create(name: RecipientName, email: RecipientEmailAddress): Recipient {
             return Recipient(RecipientId.createRandom(), name, email, false)

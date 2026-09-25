@@ -32,7 +32,12 @@ data class RecipientViewModel private constructor(
 ) {
     companion object {
         fun fromDomain(recipient: Recipient): RecipientViewModel {
-            return RecipientViewModel(recipient.id.value, recipient.name.value, recipient.email.value, recipient.locked)
+            return RecipientViewModel(
+                recipient.id.value,
+                recipient.name.value,
+                recipient.email.value,
+                recipient.locked
+            )
         }
     }
 }

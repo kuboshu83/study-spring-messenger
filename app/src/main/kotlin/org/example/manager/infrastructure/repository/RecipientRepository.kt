@@ -60,7 +60,7 @@ data class RecipientDTO(val id: String, val name: String, val email: String, val
         return Recipient(
             RecipientId.fromString(id),
             RecipientName(name),
-            RecipientEmailAddress(email),
+            RecipientEmailAddress.of(email),
             locked
         )
     }

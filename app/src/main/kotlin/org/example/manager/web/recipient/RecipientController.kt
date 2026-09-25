@@ -43,7 +43,7 @@ class RecipientController(
     @PostMapping("/create")
     fun createRecipient(form: NewRecipientForm): String {
         val name = RecipientName(form.name)
-        val email = RecipientEmailAddress(form.email)
+        val email = RecipientEmailAddress.of(form.email)
         recipientCreateService.create(name, email)
         return REDIRECT_TO_RECIPIENT_TOP
     }
@@ -64,7 +64,7 @@ class RecipientController(
         val recipient = Recipient(
             RecipientId.fromString(recipientId),
             RecipientName(form.name),
-            RecipientEmailAddress(form.email),
+            RecipientEmailAddress.of(form.email),
             form.locked
         )
         recipientUpdateService.update(recipient)
