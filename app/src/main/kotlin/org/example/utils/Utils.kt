@@ -1,5 +1,8 @@
 package org.example.utils
 
+/**
+ * sizeは3以上に設定してください。
+ */
 fun ellipsize(text: String, size: Int = 50): String {
     val dots = "..."
 
