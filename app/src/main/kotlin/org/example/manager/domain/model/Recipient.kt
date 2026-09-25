@@ -52,7 +52,7 @@ data class RecipientEmailAddress private constructor(val address: EmailAddress) 
 
     init {
         if (!allowedDomain.contains(address.domain)) {
-            throw NotAllowedEmailDomainException("not allowed domain: $address")
+            throw NotAllowedEmailDomainException("not allowed domain: allowed domain is [${allowedDomain.joinToString(", ")}]")
         }
     }
 }
