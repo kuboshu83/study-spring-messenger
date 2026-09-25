@@ -1,4 +1,4 @@
-package org.example.utils
+package org.example.common.utils
 
 /**
  * sizeは3以上に設定してください。

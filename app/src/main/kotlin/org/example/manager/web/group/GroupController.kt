@@ -38,7 +38,7 @@ class GroupController(
 
     @PostMapping("/create")
     fun createGroup(form: NewGroupForm): String {
-        groupCreateService.create(GroupName(form.name), Description.of(form.description))
+        groupCreateService.create(GroupName(form.name), GroupDescription.of(form.description))
         return REDIRECT_TO_GROUP_TOP
     }
 
@@ -77,7 +77,7 @@ class GroupController(
             GroupName(form.name),
             form.locked,
             members,
-            Description.of(form.description)
+            GroupDescription.of(form.description)
         )
         groupUpdateService.update(group)
         return REDIRECT_TO_GROUP_TOP

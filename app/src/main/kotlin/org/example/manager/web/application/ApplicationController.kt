@@ -39,7 +39,7 @@ class ApplicationController(
 
     @PostMapping("/create")
     fun createApplication(form: ApplicationCreationForm): String {
-        applicationCreateService.create(ApplicationName(form.name), Description.of(form.description))
+        applicationCreateService.create(ApplicationName(form.name), ApplicationDescription.of(form.description))
         return "redirect:/applications"
     }
 
@@ -73,7 +73,7 @@ class ApplicationController(
             ApplicationName(form.name),
             form.locked,
             groups,
-            Description.of(form.description)
+            ApplicationDescription.of(form.description)
         )
         applicationUpdateService.update(application)
         return REDIRECT_TO_APPLICATION_TOP

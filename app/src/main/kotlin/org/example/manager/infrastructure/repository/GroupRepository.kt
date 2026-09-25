@@ -140,7 +140,7 @@ class GroupDtoCollection(private val groupDTOs: List<GroupDTO>) {
             val name = GroupName(groupDTO.name)
             val locked = groupDTO.locked
             val recipientId = groupDTO.recipientId?.let { id -> RecipientId.fromString(id) }
-            val description = Description.of(groupDTO.description)
+            val description = GroupDescription.of(groupDTO.description)
 
             val group = groups[groupId]
             if (group == null) {

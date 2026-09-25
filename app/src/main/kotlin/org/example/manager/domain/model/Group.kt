@@ -1,5 +1,8 @@
 package org.example.manager.domain.model
 
+import org.example.common.domain.Id
+import org.example.common.utils.trimSpace
+
 data class GroupId private constructor(private val id: Id) {
     companion object {
         fun createRandom(): GroupId {
@@ -62,20 +65,36 @@ class GroupUniqueMembers(val members: Set<RecipientId>) {
     }
 }
 
+data class GroupDescription private constructor(val value: String) {
+    companion object {
+        private const val MAX_LENGTH = 200
+
+        fun of(text: String): GroupDescription {
+            return GroupDescription(trimSpace(text))
+        }
+    }
+
+    init {
+        require(value.length <= MAX_LENGTH) {
+            "group description is too long: maxSize=$MAX_LENGTH, length=${value.length}"
+        }
+    }
+}
+
 class Group(
     val id: GroupId,
     val name: GroupName,
     val locked: Boolean,
     val members: GroupUniqueMembers,
-    val description: Description
+    val description: GroupDescription
 ) {
     companion object {
-        fun create(name: GroupName, description: Description): Group {
+        fun create(name: GroupName, description: GroupDescription): Group {
             return Group(GroupId.createRandom(), name, false, GroupUniqueMembers.empty(), description)
         }
     }
 
-    constructor(id: GroupId, name: GroupName, locked: Boolean, description: Description)
+    constructor(id: GroupId, name: GroupName, locked: Boolean, description: GroupDescription)
             : this(id, name, locked, GroupUniqueMembers.empty(), description)
 
     fun isEmpty(): Boolean {

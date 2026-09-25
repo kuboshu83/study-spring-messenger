@@ -2,8 +2,8 @@ package org.example.manager.domain.service
 
 import org.example.manager.domain.errors.DataConflictedException
 import org.example.manager.domain.errors.DataNotFoundException
-import org.example.manager.domain.model.Description
 import org.example.manager.domain.model.Group
+import org.example.manager.domain.model.GroupDescription
 import org.example.manager.domain.model.GroupId
 import org.example.manager.domain.model.GroupName
 import org.example.manager.domain.repository.GroupCommand
@@ -38,7 +38,7 @@ class GroupSearchService(private val groupQuery: GroupQuery) {
 @Service
 class GroupCreateService(private val groupCommand: GroupCommand, private val groupQuery: GroupQuery) {
     @Transactional
-    fun create(groupName: GroupName, description: Description): GroupId {
+    fun create(groupName: GroupName, description: GroupDescription): GroupId {
         if (groupQuery.findByGroupName(groupName) != null) {
             throw DataConflictedException("specified group name already used: groupName=${groupName.value}")
         }

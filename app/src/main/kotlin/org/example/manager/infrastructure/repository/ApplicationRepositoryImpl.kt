@@ -94,7 +94,7 @@ data class ApplicationDTO(
         name: ApplicationName,
         locked: Boolean,
         groupId: GroupId?,
-        description: Description
+        description: ApplicationDescription
     ) : this(applicationId.value, name.value, locked, groupId?.value, description.value)
 }
 
@@ -143,7 +143,7 @@ class ApplicationDtoCollection(private val applicationDTOs: List<ApplicationDTO>
             val name = ApplicationName(applicationDTO.name)
             val locked = applicationDTO.locked
             val groupId = applicationDTO.groupId?.let { GroupId.fromString(it) }
-            val description = Description.of(applicationDTO.description)
+            val description = ApplicationDescription.of(applicationDTO.description)
 
             val application = applications[applicationId]
             if (application != null) {

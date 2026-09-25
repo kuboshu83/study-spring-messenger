@@ -1,4 +1,4 @@
-package org.example.utils
+package org.example.common.utils
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.DescribeSpec

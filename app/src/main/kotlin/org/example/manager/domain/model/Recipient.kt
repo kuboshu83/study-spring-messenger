@@ -1,5 +1,6 @@
 package org.example.manager.domain.model
 
+import org.example.common.domain.Id
 import org.example.manager.domain.errors.NotAllowedDomainException
 
 data class RecipientId private constructor(private val id: Id) {

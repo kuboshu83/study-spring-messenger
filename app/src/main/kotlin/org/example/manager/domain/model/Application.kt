@@ -1,6 +1,8 @@
 package org.example.manager.domain.model
 
-import org.example.utils.ellipsize
+import org.example.common.domain.Id
+import org.example.common.utils.ellipsize
+import org.example.common.utils.trimSpace
 
 data class ApplicationId private constructor(val id: Id) {
     companion object {
@@ -69,20 +71,36 @@ class ApplicationUniqueMembers(private val groups: Set<GroupId>) {
     }
 }
 
+data class ApplicationDescription private constructor(val value: String) {
+    companion object {
+        private const val MAX_LENGTH = 200
+
+        fun of(text: String): ApplicationDescription {
+            return ApplicationDescription(trimSpace(text))
+        }
+    }
+
+    init {
+        require(value.length <= MAX_LENGTH) {
+            "application description is too long: maxSize=$MAX_LENGTH, length=${value.length}"
+        }
+    }
+}
+
 class Application(
     val id: ApplicationId,
     val name: ApplicationName,
     val locked: Boolean,
     val groups: ApplicationUniqueMembers,
-    val description: Description
+    val description: ApplicationDescription
 ) {
     companion object {
-        fun create(name: ApplicationName, description: Description): Application {
+        fun create(name: ApplicationName, description: ApplicationDescription): Application {
             return Application(ApplicationId.createRandom(), name, false, ApplicationUniqueMembers.empty(), description)
         }
     }
 
-    constructor(id: ApplicationId, name: ApplicationName, locked: Boolean, description: Description)
+    constructor(id: ApplicationId, name: ApplicationName, locked: Boolean, description: ApplicationDescription)
             : this(id, name, locked, ApplicationUniqueMembers.empty(), description)
 
     fun addGroup(groupId: GroupId): Application {
