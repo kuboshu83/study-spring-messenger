@@ -52,4 +52,32 @@ class UtilsTest : DescribeSpec({
             }
         }
     }
+
+    describe("trimSpace") {
+        val s0 = " " // 半角スペース
+        val s1 = "　" // 全角スペース
+        describe("正常系") {
+            context("両端に空白文字がない場合") {
+                it("入力した文字列をそのまま返す") {
+                    // arrange
+                    val text = "ABC あいう"
+                    // act
+                    val result = trimSpace(text)
+                    // assert
+                    result.shouldBe(text)
+                }
+            }
+
+            context("両端に空白文字列がある場合") {
+                it("両端の空白文字列を削除した文字列を返す") {
+                    // arrange
+                    val text = "\t\n$s0$s1\rABC あいう\t\n$s0$s1\r"
+                    // act
+                    val result = trimSpace(text)
+                    // assert
+                    result.shouldBe("ABC あいう")
+                }
+            }
+        }
+    }
 })
