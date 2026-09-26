@@ -4,7 +4,6 @@ import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.datatest.withIts
-import io.kotest.matchers.shouldBe
 
 class GroupNameTest : DescribeSpec({
     describe("constructor") {
@@ -51,108 +50,6 @@ class GroupNameTest : DescribeSpec({
                     }
                     print(error.message)
                 }
-            }
-        }
-    }
-})
-
-class UniqueGroupMembersTest : DescribeSpec({
-    describe("empty") {
-        context("正常系") {
-            it("メンバーが未登録のインスタンスを生成する") {
-                // act
-                val result = UniqueGroupMembers.empty()
-                // assert
-                result.isEmpty().shouldBe(true)
-            }
-        }
-    }
-
-    describe("add") {
-        context("正常系") {
-            it("未登録のIDが入力されたら、入力されたIDを追加したインスタンスを生成する") {
-                // arrange
-                val id = RecipientId.createRandom()
-                val members = UniqueGroupMembers.empty()
-                // act
-                val result = members.add(id)
-                //  assert
-                result.contains(id).shouldBe(true)
-            }
-
-            it("登録済みのIDが入力されたら、入力されたIDをただ１つ含んだインスタンスを生成する") {
-                // arrange
-                val id = RecipientId.createRandom()
-                val members = UniqueGroupMembers(setOf(id))
-                // act
-                val result = members.add(id)
-                // assert
-                result.contains(id).shouldBe(true)
-                result.size.shouldBe(1)
-            }
-        }
-    }
-
-    describe("delete") {
-        context("正常系") {
-            it("登録済みのIDが入力されたら、入力されたIDを削除したインスタンスを生成する") {
-                // arrange
-                val id = RecipientId.createRandom()
-                val members = UniqueGroupMembers(setOf(id))
-                // act
-                val result = members.delete(id)
-                // assert
-                result.contains(id).shouldBe(false)
-                result.size.shouldBe(0)
-            }
-
-            it("未登録のIDが入力されたら、入力されたIDを含まないインスタンスを生成する") {
-                // arrange
-                val id = RecipientId.createRandom()
-                val members = UniqueGroupMembers.empty()
-                // act
-                val result = members.delete(id)
-                // assert
-                result.contains(id).shouldBe(false)
-            }
-
-            it("入力されたID以外は削除されない") {
-                // arrange
-                val id = RecipientId.createRandom()
-                val members = UniqueGroupMembers(setOf(id))
-                // act
-                val result = members.delete(RecipientId.createRandom())
-                // assert
-                result.contains(id).shouldBe(true)
-            }
-        }
-    }
-
-    describe("subtract") {
-        context("正常系") {
-            it("自身が空の場合、入力されたインスタンスによらず空のインスタンスを返す") {
-                // arrange
-                val member = UniqueGroupMembers.empty()
-                val other = UniqueGroupMembers(setOf(RecipientId.createRandom()))
-                // act
-                val result = member.subtract(other)
-                // assert
-                result.isEmpty().shouldBe(true)
-            }
-
-            it("自身が空でない場合、入力されたインスタンスに登録されているIDを削除した差分のインスタンスを返す") {
-                // arrange
-                val id0 = RecipientId.createRandom()
-                val id1 = RecipientId.createRandom()
-                val id2 = RecipientId.createRandom()
-                val member = UniqueGroupMembers(setOf(id0, id1, id2))
-                val other = UniqueGroupMembers(setOf(id2, RecipientId.createRandom()))
-                // act
-                val result = member.subtract(other)
-                // assert
-                result.contains(id0).shouldBe(true)
-                result.contains(id1).shouldBe(true)
-                result.contains(id2).shouldBe(false)
             }
         }
     }

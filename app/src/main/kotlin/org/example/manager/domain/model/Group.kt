@@ -1,6 +1,7 @@
 package org.example.manager.domain.model
 
 import org.example.common.domain.Id
+import org.example.common.domain.UniqueElements
 import org.example.common.utils.trimSpace
 
 data class GroupId private constructor(private val id: Id) {
@@ -34,37 +35,42 @@ data class GroupName(val value: String) {
     }
 }
 
-class UniqueGroupMembers(val members: Set<RecipientId>) {
+class UniqueGroupMembers(private val elements: UniqueElements<RecipientId>) {
     companion object {
         fun empty(): UniqueGroupMembers {
-            return UniqueGroupMembers(emptySet())
+            return UniqueGroupMembers(UniqueElements.empty())
         }
     }
 
+    val members: Set<RecipientId>
+        get() = elements.elements
+
     val size: Int
-        get() = members.size
+        get() = elements.size
 
     fun isEmpty(): Boolean {
-        return members.isEmpty()
+        return elements.isEmpty()
     }
 
-    // リストを受け取る場合の方が多そうなのでリスト型のコンストラクタを用意した
-    constructor(recipients: List<RecipientId>) : this(recipients.toSet())
+    constructor(members: Set<RecipientId>) : this(UniqueElements(members))
 
-    fun contains(recipientId: RecipientId): Boolean {
-        return members.contains(recipientId)
+    constructor(members: List<RecipientId>) : this(members.toSet())
+
+    fun contains(id: RecipientId): Boolean {
+        return elements.contains(id)
     }
 
-    fun add(recipientId: RecipientId): UniqueGroupMembers {
-        return UniqueGroupMembers(members + recipientId)
+    fun add(id: RecipientId): UniqueGroupMembers {
+        return UniqueGroupMembers(elements.add(id))
     }
 
-    fun delete(recipientId: RecipientId): UniqueGroupMembers {
-        return UniqueGroupMembers(members - recipientId)
+    fun delete(id: RecipientId): UniqueGroupMembers {
+        return UniqueGroupMembers(elements.delete(id))
     }
 
     fun subtract(other: UniqueGroupMembers): UniqueGroupMembers {
-        return UniqueGroupMembers(members - other.members)
+        return UniqueGroupMembers(elements.subtract(other.elements))
+
     }
 }
 
