@@ -37,7 +37,7 @@ class ApplicationCommandImpl(
             }
         }
 
-        val currentRegistrations = ApplicationUniqueMembers(foundRegistrations)
+        val currentRegistrations = UniqueApplicationGroups(foundRegistrations)
         val newRegistrations = application.groups
 
         val deleteTargetRegistrations = currentRegistrations.subtract(newRegistrations).toList()

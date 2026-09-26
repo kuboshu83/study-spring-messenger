@@ -36,10 +36,10 @@ data class ApplicationName(val value: String) {
     }
 }
 
-class ApplicationUniqueMembers(private val elements: UniqueElements<GroupId>) {
+class UniqueApplicationGroups(private val elements: UniqueElements<GroupId>) {
     companion object {
-        fun empty(): ApplicationUniqueMembers {
-            return ApplicationUniqueMembers(UniqueElements.empty())
+        fun empty(): UniqueApplicationGroups {
+            return UniqueApplicationGroups(UniqueElements.empty())
         }
     }
 
@@ -61,16 +61,16 @@ class ApplicationUniqueMembers(private val elements: UniqueElements<GroupId>) {
         return elements.contains(id)
     }
 
-    fun add(id: GroupId): ApplicationUniqueMembers {
-        return ApplicationUniqueMembers(elements.add(id))
+    fun add(id: GroupId): UniqueApplicationGroups {
+        return UniqueApplicationGroups(elements.add(id))
     }
 
-    fun delete(id: GroupId): ApplicationUniqueMembers {
-        return ApplicationUniqueMembers(elements.delete(id))
+    fun delete(id: GroupId): UniqueApplicationGroups {
+        return UniqueApplicationGroups(elements.delete(id))
     }
 
-    fun subtract(other: ApplicationUniqueMembers): ApplicationUniqueMembers {
-        return ApplicationUniqueMembers(elements.subtract(other.elements))
+    fun subtract(other: UniqueApplicationGroups): UniqueApplicationGroups {
+        return UniqueApplicationGroups(elements.subtract(other.elements))
     }
 }
 
@@ -94,17 +94,17 @@ class Application(
     val id: ApplicationId,
     val name: ApplicationName,
     val locked: Boolean,
-    val groups: ApplicationUniqueMembers,
+    val groups: UniqueApplicationGroups,
     val description: ApplicationDescription
 ) {
     companion object {
         fun create(name: ApplicationName, description: ApplicationDescription): Application {
-            return Application(ApplicationId.createRandom(), name, false, ApplicationUniqueMembers.empty(), description)
+            return Application(ApplicationId.createRandom(), name, false, UniqueApplicationGroups.empty(), description)
         }
     }
 
     constructor(id: ApplicationId, name: ApplicationName, locked: Boolean, description: ApplicationDescription)
-            : this(id, name, locked, ApplicationUniqueMembers.empty(), description)
+            : this(id, name, locked, UniqueApplicationGroups.empty(), description)
 
     fun addGroup(groupId: GroupId): Application {
         val updatedGroups = groups.add(groupId)

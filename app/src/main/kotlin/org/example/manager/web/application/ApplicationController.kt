@@ -67,7 +67,7 @@ class ApplicationController(
 
     @PostMapping("/{id}/update")
     fun updateApplication(@PathVariable("id") id: String, form: ApplicationUpdateForm): String {
-        val groups = ApplicationUniqueMembers(form.groups.map { GroupId.fromString(it) })
+        val groups = UniqueApplicationGroups(form.groups.map { GroupId.fromString(it) })
         val application = Application(
             ApplicationId.fromString(id),
             ApplicationName(form.name),
