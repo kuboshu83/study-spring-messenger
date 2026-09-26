@@ -42,6 +42,8 @@ data class RecipientEmailAddress private constructor(val address: EmailAddress) 
         get() = address.value
 
     companion object {
+        // 送信許可ドメインの追加・削除はここを修正してください。
+        // ドメインの変更はレビュー対象であるため、ハードコードしています。
         private val allowedDomain = listOf("example.com", "example.org")
 
         fun of(text: String): RecipientEmailAddress {
