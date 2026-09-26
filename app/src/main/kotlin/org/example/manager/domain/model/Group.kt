@@ -1,7 +1,8 @@
 package org.example.manager.domain.model
 
-import org.example.manager.domain.errors.InvalidFormatException
-import org.example.manager.domain.errors.TooLongException
+import org.example.common.domain.Id
+import org.example.common.domain.UniqueElements
+import org.example.common.utils.trimSpace
 
 data class GroupId private constructor(private val id: Id) {
     companion object {
@@ -20,52 +21,72 @@ data class GroupId private constructor(private val id: Id) {
 
 data class GroupName(val value: String) {
     companion object {
-        private val VALID_PATTERN = Regex("""^[a-z]+ ?[a-z]+$""")
+        private val VALID_PATTERN = Regex("""^[a-zA-Z0-9-_.]+( [a-zA-Z0-9-_.]+)*$""")
         private const val MAX_SIZE = 20
+    }
 
-        fun validate(name: String) {
-            if (name.length > MAX_SIZE) {
-                throw TooLongException("group name is too long: limitSize=$MAX_SIZE, actual=${name.length}")
-            }
-            if (!VALID_PATTERN.matches(name)) {
-                throw InvalidFormatException("group name format is invalid: name='$name'")
-            }
+    init {
+        require(value.length <= MAX_SIZE) {
+            "group name is too long: maxLength=$MAX_SIZE, length=${value.length}"
+        }
+        require(VALID_PATTERN.matches(value)) {
+            "group name format is invalid: name='$value'"
+        }
+    }
+}
+
+class UniqueGroupMembers(private val elements: UniqueElements<RecipientId>) {
+    companion object {
+        fun empty(): UniqueGroupMembers {
+            return UniqueGroupMembers(UniqueElements.empty())
+        }
+    }
+
+    val members: Set<RecipientId>
+        get() = elements.elements
+
+    val size: Int
+        get() = elements.size
+
+    fun isEmpty(): Boolean {
+        return elements.isEmpty()
+    }
+
+    constructor(members: Set<RecipientId>) : this(UniqueElements(members))
+
+    constructor(members: List<RecipientId>) : this(members.toSet())
+
+    fun contains(id: RecipientId): Boolean {
+        return elements.contains(id)
+    }
+
+    fun add(id: RecipientId): UniqueGroupMembers {
+        return UniqueGroupMembers(elements.add(id))
+    }
+
+    fun delete(id: RecipientId): UniqueGroupMembers {
+        return UniqueGroupMembers(elements.delete(id))
+    }
+
+    fun subtract(other: UniqueGroupMembers): UniqueGroupMembers {
+        return UniqueGroupMembers(elements.subtract(other.elements))
+
+    }
+}
+
+data class GroupDescription private constructor(val value: String) {
+    companion object {
+        private const val MAX_LENGTH = 200
+
+        fun of(text: String): GroupDescription {
+            return GroupDescription(trimSpace(text))
         }
     }
 
     init {
-        validate(value)
-    }
-}
-
-class GroupUniqueMembers(val members: Set<RecipientId>) {
-    companion object {
-        fun empty(): GroupUniqueMembers {
-            return GroupUniqueMembers(emptySet())
+        require(value.length <= MAX_LENGTH) {
+            "group description is too long: maxLength=$MAX_LENGTH, length=${value.length}"
         }
-    }
-
-    fun isEmpty(): Boolean {
-        return members.isEmpty()
-    }
-
-    // リストを受け取る場合の方が多そうなのでリスト型のコンストラクタを用意した
-    constructor(recipients: List<RecipientId>) : this(recipients.toSet())
-
-    fun contains(recipientId: RecipientId): Boolean {
-        return members.contains(recipientId)
-    }
-
-    fun add(recipientId: RecipientId): GroupUniqueMembers {
-        return GroupUniqueMembers(members + recipientId)
-    }
-
-    fun delete(recipientId: RecipientId): GroupUniqueMembers {
-        return GroupUniqueMembers(members - recipientId)
-    }
-
-    fun subtract(other: GroupUniqueMembers): GroupUniqueMembers {
-        return GroupUniqueMembers(members - other.members)
     }
 }
 
@@ -73,17 +94,17 @@ class Group(
     val id: GroupId,
     val name: GroupName,
     val locked: Boolean,
-    val members: GroupUniqueMembers,
-    val description: Description
+    val members: UniqueGroupMembers,
+    val description: GroupDescription
 ) {
     companion object {
-        fun create(name: GroupName, description: Description): Group {
-            return Group(GroupId.createRandom(), name, false, GroupUniqueMembers.empty(), description)
+        fun create(name: GroupName, description: GroupDescription): Group {
+            return Group(GroupId.createRandom(), name, false, UniqueGroupMembers.empty(), description)
         }
     }
 
-    constructor(id: GroupId, name: GroupName, locked: Boolean, description: Description)
-            : this(id, name, locked, GroupUniqueMembers.empty(), description)
+    constructor(id: GroupId, name: GroupName, locked: Boolean, description: GroupDescription)
+            : this(id, name, locked, UniqueGroupMembers.empty(), description)
 
     fun isEmpty(): Boolean {
         return members.isEmpty()

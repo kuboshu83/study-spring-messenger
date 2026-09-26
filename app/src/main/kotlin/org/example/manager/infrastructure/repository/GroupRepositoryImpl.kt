@@ -4,9 +4,9 @@ import org.apache.ibatis.annotations.Mapper
 import org.example.manager.domain.model.*
 import org.example.manager.domain.repository.GroupCommand
 import org.example.manager.domain.repository.GroupQuery
-import org.springframework.stereotype.Repository
+import org.springframework.stereotype.Component
 
-@Repository
+@Component
 class GroupQueryImpl(private val groupQueryDAO: GroupQueryDAO) : GroupQuery {
     override fun findAll(): List<Group> {
         val groupDTOs = groupQueryDAO.findAll()
@@ -47,7 +47,7 @@ class GroupQueryImpl(private val groupQueryDAO: GroupQueryDAO) : GroupQuery {
     }
 }
 
-@Repository
+@Component
 class GroupCommandImpl(
     private val groupCommandDAO: GroupCommandDAO,
     private val groupMembershipCommandDAO: GroupMemberShipCommandDAO,
@@ -78,7 +78,7 @@ class GroupCommandImpl(
                 foundMembers.add(RecipientId.fromString(dto.recipientId))
             }
         }
-        val previousMembers = GroupUniqueMembers(foundMembers)
+        val previousMembers = UniqueGroupMembers(foundMembers)
         val currentMembers = group.members
 
         val deleteMembers = previousMembers.subtract(currentMembers)
@@ -140,7 +140,7 @@ class GroupDtoCollection(private val groupDTOs: List<GroupDTO>) {
             val name = GroupName(groupDTO.name)
             val locked = groupDTO.locked
             val recipientId = groupDTO.recipientId?.let { id -> RecipientId.fromString(id) }
-            val description = Description(groupDTO.description)
+            val description = GroupDescription.of(groupDTO.description)
 
             val group = groups[groupId]
             if (group == null) {

@@ -4,9 +4,9 @@ import org.apache.ibatis.annotations.Mapper
 import org.example.manager.domain.model.*
 import org.example.manager.domain.repository.ApplicationCommand
 import org.example.manager.domain.repository.ApplicationQuery
-import org.springframework.stereotype.Repository
+import org.springframework.stereotype.Component
 
-@Repository
+@Component
 class ApplicationCommandImpl(
     private val applicationCommandDAO: ApplicationCommandDAO,
     private val applicationGroupCommandDAO: ApplicationGroupCommandDAO,
@@ -37,7 +37,7 @@ class ApplicationCommandImpl(
             }
         }
 
-        val currentRegistrations = ApplicationUniqueMembers(foundRegistrations)
+        val currentRegistrations = UniqueApplicationGroups(foundRegistrations)
         val newRegistrations = application.groups
 
         val deleteTargetRegistrations = currentRegistrations.subtract(newRegistrations).toList()
@@ -54,7 +54,7 @@ class ApplicationCommandImpl(
     }
 }
 
-@Repository
+@Component
 class ApplicationQueryImpl(private val applicationQueryDAO: ApplicationQueryDAO) : ApplicationQuery {
     override fun findAll(): List<Application> {
         val applicationDTOs = applicationQueryDAO.findAll()
@@ -94,7 +94,7 @@ data class ApplicationDTO(
         name: ApplicationName,
         locked: Boolean,
         groupId: GroupId?,
-        description: Description
+        description: ApplicationDescription
     ) : this(applicationId.value, name.value, locked, groupId?.value, description.value)
 }
 
@@ -143,7 +143,7 @@ class ApplicationDtoCollection(private val applicationDTOs: List<ApplicationDTO>
             val name = ApplicationName(applicationDTO.name)
             val locked = applicationDTO.locked
             val groupId = applicationDTO.groupId?.let { GroupId.fromString(it) }
-            val description = Description(applicationDTO.description)
+            val description = ApplicationDescription.of(applicationDTO.description)
 
             val application = applications[applicationId]
             if (application != null) {

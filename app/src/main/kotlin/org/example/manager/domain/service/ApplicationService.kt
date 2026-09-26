@@ -3,9 +3,9 @@ package org.example.manager.domain.service
 import org.example.manager.domain.errors.DataConflictedException
 import org.example.manager.domain.errors.DataNotFoundException
 import org.example.manager.domain.model.Application
+import org.example.manager.domain.model.ApplicationDescription
 import org.example.manager.domain.model.ApplicationId
 import org.example.manager.domain.model.ApplicationName
-import org.example.manager.domain.model.Description
 import org.example.manager.domain.repository.ApplicationCommand
 import org.example.manager.domain.repository.ApplicationQuery
 import org.springframework.stereotype.Service
@@ -30,7 +30,7 @@ class ApplicationCreateService(
     private val applicationQuery: ApplicationQuery
 ) {
     @Transactional
-    fun create(applicationName: ApplicationName, description: Description): ApplicationId {
+    fun create(applicationName: ApplicationName, description: ApplicationDescription): ApplicationId {
         if (applicationQuery.findByApplicationName(applicationName) != null) {
             throw DataConflictedException("specified application name already used: applicationName=${applicationName.value}")
         }

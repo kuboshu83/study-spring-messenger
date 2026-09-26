@@ -1,10 +1,9 @@
-package org.example.web.manager
+package org.example.manager.web
 
 import org.example.manager.domain.model.Application
 import org.example.manager.domain.model.Group
 import org.example.manager.domain.model.Recipient
 
-@ConsistentCopyVisibility
 data class GroupViewModel private constructor(
     val id: String,
     val name: String,
@@ -25,7 +24,6 @@ data class GroupViewModel private constructor(
     }
 }
 
-@ConsistentCopyVisibility
 data class RecipientViewModel private constructor(
     val id: String,
     val name: String,
@@ -34,12 +32,16 @@ data class RecipientViewModel private constructor(
 ) {
     companion object {
         fun fromDomain(recipient: Recipient): RecipientViewModel {
-            return RecipientViewModel(recipient.id.value, recipient.name.value, recipient.email.value, recipient.locked)
+            return RecipientViewModel(
+                recipient.id.value,
+                recipient.name.value,
+                recipient.email.value,
+                recipient.locked
+            )
         }
     }
 }
 
-@ConsistentCopyVisibility
 data class ApplicationViewModel private constructor(
     val id: String,
     val name: String,

@@ -1,9 +1,9 @@
-package org.example.web.manager.recipient.application
+package org.example.manager.web.application
 
 import org.example.manager.domain.model.*
 import org.example.manager.domain.service.*
-import org.example.web.manager.ApplicationViewModel
-import org.example.web.manager.GroupViewModel
+import org.example.manager.web.ApplicationViewModel
+import org.example.manager.web.GroupViewModel
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
@@ -39,7 +39,7 @@ class ApplicationController(
 
     @PostMapping("/create")
     fun createApplication(form: ApplicationCreationForm): String {
-        applicationCreateService.create(ApplicationName(form.name), Description(form.description))
+        applicationCreateService.create(ApplicationName(form.name), ApplicationDescription.of(form.description))
         return "redirect:/applications"
     }
 
@@ -67,13 +67,13 @@ class ApplicationController(
 
     @PostMapping("/{id}/update")
     fun updateApplication(@PathVariable("id") id: String, form: ApplicationUpdateForm): String {
-        val groups = ApplicationUniqueMembers(form.groups.map { GroupId.fromString(it) })
+        val groups = UniqueApplicationGroups(form.groups.map { GroupId.fromString(it) })
         val application = Application(
             ApplicationId.fromString(id),
             ApplicationName(form.name),
             form.locked,
             groups,
-            Description(form.description)
+            ApplicationDescription.of(form.description)
         )
         applicationUpdateService.update(application)
         return REDIRECT_TO_APPLICATION_TOP

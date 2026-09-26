@@ -1,9 +1,9 @@
-package org.example.web.manager.group
+package org.example.manager.web.group
 
 import org.example.manager.domain.model.*
 import org.example.manager.domain.service.*
-import org.example.web.manager.GroupViewModel
-import org.example.web.manager.RecipientViewModel
+import org.example.manager.web.GroupViewModel
+import org.example.manager.web.RecipientViewModel
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
@@ -38,7 +38,7 @@ class GroupController(
 
     @PostMapping("/create")
     fun createGroup(form: NewGroupForm): String {
-        groupCreateService.create(GroupName(form.name), Description(form.description))
+        groupCreateService.create(GroupName(form.name), GroupDescription.of(form.description))
         return REDIRECT_TO_GROUP_TOP
     }
 
@@ -71,13 +71,13 @@ class GroupController(
 
     @PostMapping("/{id}/update")
     fun updateGroup(@PathVariable("id") groupId: String, form: UpdateGroupForm): String {
-        val members = GroupUniqueMembers(form.members.map { RecipientId.fromString(it) })
+        val members = UniqueGroupMembers(form.members.map { RecipientId.fromString(it) })
         val group = Group(
             GroupId.fromString(groupId),
             GroupName(form.name),
             form.locked,
             members,
-            Description(form.description)
+            GroupDescription.of(form.description)
         )
         groupUpdateService.update(group)
         return REDIRECT_TO_GROUP_TOP

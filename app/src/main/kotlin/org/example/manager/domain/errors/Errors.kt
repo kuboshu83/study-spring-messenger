@@ -1,11 +1,9 @@
 package org.example.manager.domain.errors
 
-class TooLongException(message: String, cause: Throwable? = null) : Exception(message, cause)
+open class BusinessException(message: String, cause: Throwable? = null) : RuntimeException(message, cause)
 
-class NotAllowedDomainException(message: String, cause: Throwable? = null) : Exception(message, cause)
+class NotAllowedEmailDomainException(message: String, cause: Throwable? = null) : BusinessException(message, cause)
 
-class InvalidFormatException(message: String, cause: Throwable? = null) : Exception(message, cause)
+class DataConflictedException(message: String, cause: Throwable? = null) : RuntimeException(message, cause)
 
-class DataConflictedException(message: String, cause: Throwable? = null) : Exception(message, cause)
-
-class DataNotFoundException(message: String, cause: Throwable? = null) : Exception(message, cause)
+class DataNotFoundException(message: String, cause: Throwable? = null) : RuntimeException(message, cause)
