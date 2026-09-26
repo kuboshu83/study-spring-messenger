@@ -4,9 +4,9 @@ import org.apache.ibatis.annotations.Mapper
 import org.example.manager.domain.model.*
 import org.example.manager.domain.repository.ApplicationCommand
 import org.example.manager.domain.repository.ApplicationQuery
-import org.springframework.stereotype.Repository
+import org.springframework.stereotype.Component
 
-@Repository
+@Component
 class ApplicationCommandImpl(
     private val applicationCommandDAO: ApplicationCommandDAO,
     private val applicationGroupCommandDAO: ApplicationGroupCommandDAO,
@@ -54,7 +54,7 @@ class ApplicationCommandImpl(
     }
 }
 
-@Repository
+@Component
 class ApplicationQueryImpl(private val applicationQueryDAO: ApplicationQueryDAO) : ApplicationQuery {
     override fun findAll(): List<Application> {
         val applicationDTOs = applicationQueryDAO.findAll()

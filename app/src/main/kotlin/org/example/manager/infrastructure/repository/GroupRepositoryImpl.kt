@@ -4,9 +4,9 @@ import org.apache.ibatis.annotations.Mapper
 import org.example.manager.domain.model.*
 import org.example.manager.domain.repository.GroupCommand
 import org.example.manager.domain.repository.GroupQuery
-import org.springframework.stereotype.Repository
+import org.springframework.stereotype.Component
 
-@Repository
+@Component
 class GroupQueryImpl(private val groupQueryDAO: GroupQueryDAO) : GroupQuery {
     override fun findAll(): List<Group> {
         val groupDTOs = groupQueryDAO.findAll()
@@ -47,7 +47,7 @@ class GroupQueryImpl(private val groupQueryDAO: GroupQueryDAO) : GroupQuery {
     }
 }
 
-@Repository
+@Component
 class GroupCommandImpl(
     private val groupCommandDAO: GroupCommandDAO,
     private val groupMembershipCommandDAO: GroupMemberShipCommandDAO,

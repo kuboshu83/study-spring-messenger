@@ -4,9 +4,9 @@ import org.apache.ibatis.annotations.Mapper
 import org.example.manager.domain.model.*
 import org.example.manager.domain.repository.RecipientCommand
 import org.example.manager.domain.repository.RecipientQuery
-import org.springframework.stereotype.Repository
+import org.springframework.stereotype.Component
 
-@Repository
+@Component
 class RecipientCommandImpl(private val recipientCommandDAO: RecipientCommandDAO) : RecipientCommand {
     override fun save(recipient: Recipient) {
         recipientCommandDAO.save(RecipientDTO.fromRecipient(recipient))
@@ -21,7 +21,7 @@ class RecipientCommandImpl(private val recipientCommandDAO: RecipientCommandDAO)
     }
 }
 
-@Repository
+@Component
 class RecipientQueryImpl(private val recipientQueryDAO: RecipientQueryDAO) : RecipientQuery {
     override fun findByEmail(email: RecipientEmailAddress): Recipient? {
         return recipientQueryDAO.findByEmail(email.value)?.toRecipient()
