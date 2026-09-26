@@ -51,6 +51,10 @@ class UniqueElements<T>(val elements: Set<T>) {
     val size: Int
         get() = elements.size
 
+    fun toList(): List<T> {
+        return elements.toList()
+    }
+
     fun add(element: T): UniqueElements<T> {
         return UniqueElements(elements + element)
     }

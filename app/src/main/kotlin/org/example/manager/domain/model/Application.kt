@@ -1,6 +1,7 @@
 package org.example.manager.domain.model
 
 import org.example.common.domain.Id
+import org.example.common.domain.UniqueElements
 import org.example.common.utils.ellipsize
 import org.example.common.utils.trimSpace
 
@@ -35,39 +36,41 @@ data class ApplicationName(val value: String) {
     }
 }
 
-class ApplicationUniqueMembers(private val groups: Set<GroupId>) {
+class ApplicationUniqueMembers(private val elements: UniqueElements<GroupId>) {
     companion object {
         fun empty(): ApplicationUniqueMembers {
-            return ApplicationUniqueMembers(emptySet())
+            return ApplicationUniqueMembers(UniqueElements.empty())
         }
     }
 
     fun isEmpty(): Boolean {
-        return groups.isEmpty()
+        return elements.isEmpty()
     }
 
     // フィールドを直接公開するより標準ライブラリの挙動に近く、直感的にわかりやすい
     fun toList(): List<GroupId> {
-        return groups.toList()
+        return elements.toList()
     }
+
+    constructor(groups: Set<GroupId>) : this(UniqueElements(groups))
 
     // リストを受け取る場合の方が多そうなのでリスト型のコンストラクタを用意した
-    constructor(groupIds: List<GroupId>) : this(groupIds.toSet())
+    constructor(groups: List<GroupId>) : this(groups.toSet())
 
-    fun contains(groupId: GroupId): Boolean {
-        return groups.contains(groupId)
+    fun contains(id: GroupId): Boolean {
+        return elements.contains(id)
     }
 
-    fun add(groupId: GroupId): ApplicationUniqueMembers {
-        return ApplicationUniqueMembers(groups + groupId)
+    fun add(id: GroupId): ApplicationUniqueMembers {
+        return ApplicationUniqueMembers(elements.add(id))
     }
 
-    fun delete(groupId: GroupId): ApplicationUniqueMembers {
-        return ApplicationUniqueMembers(groups - groupId)
+    fun delete(id: GroupId): ApplicationUniqueMembers {
+        return ApplicationUniqueMembers(elements.delete(id))
     }
 
     fun subtract(other: ApplicationUniqueMembers): ApplicationUniqueMembers {
-        return ApplicationUniqueMembers(groups - other.groups)
+        return ApplicationUniqueMembers(elements.subtract(other.elements))
     }
 }
 
