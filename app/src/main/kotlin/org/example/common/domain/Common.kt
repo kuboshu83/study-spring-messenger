@@ -37,3 +37,37 @@ data class EmailAddress(val value: String) {
         }
     }
 }
+
+class UniqueElements<T>(val elements: Set<T>) {
+    companion object {
+        fun <U> empty(): UniqueElements<U> {
+            return UniqueElements(emptySet())
+        }
+    }
+
+    // リストを受け取る場合が多いので、リストを受け取るコンストラクタも用意した
+    constructor(elements: List<T>) : this(elements.toSet())
+
+    val size: Int
+        get() = elements.size
+
+    fun add(element: T): UniqueElements<T> {
+        return UniqueElements(elements + element)
+    }
+
+    fun delete(element: T): UniqueElements<T> {
+        return UniqueElements(elements - element)
+    }
+
+    fun subtract(other: UniqueElements<T>): UniqueElements<T> {
+        return UniqueElements(elements - other.elements)
+    }
+
+    fun contains(element: T): Boolean {
+        return elements.contains(element)
+    }
+
+    fun isEmpty(): Boolean {
+        return elements.isEmpty()
+    }
+}
