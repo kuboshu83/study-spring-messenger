@@ -20,13 +20,13 @@ data class GroupId private constructor(private val id: Id) {
 
 data class GroupName(val value: String) {
     companion object {
-        private val VALID_PATTERN = Regex("""^[a-z]+ ?[a-z]+$""")
+        private val VALID_PATTERN = Regex("""^[a-zA-Z0-9-_.]+( [a-zA-Z0-9-_.]+)*$""")
         private const val MAX_SIZE = 20
     }
 
     init {
         require(value.length <= MAX_SIZE) {
-            "group name is too long: limitSize=$MAX_SIZE, actual=${value.length}"
+            "group name is too long: maxLength=$MAX_SIZE, length=${value.length}"
         }
         require(VALID_PATTERN.matches(value)) {
             "group name format is invalid: name='$value'"
@@ -40,6 +40,9 @@ class GroupUniqueMembers(val members: Set<RecipientId>) {
             return GroupUniqueMembers(emptySet())
         }
     }
+
+    val size: Int
+        get() = members.size
 
     fun isEmpty(): Boolean {
         return members.isEmpty()
@@ -76,7 +79,7 @@ data class GroupDescription private constructor(val value: String) {
 
     init {
         require(value.length <= MAX_LENGTH) {
-            "group description is too long: maxSize=$MAX_LENGTH, length=${value.length}"
+            "group description is too long: maxLength=$MAX_LENGTH, length=${value.length}"
         }
     }
 }
