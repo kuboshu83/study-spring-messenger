@@ -21,8 +21,8 @@ data class ApplicationId private constructor(val id: Id) {
 
 data class ApplicationName(val value: String) {
     companion object {
-        private val VALID_PATTERN = Regex("""^[a-z]+ ?[a-z]+$""")
-        private const val MAX_SIZE = 20
+        private val VALID_PATTERN = Regex("""^[a-zA-Z0-9-_.]+( [a-zA-Z0-9-_.]+)*$""")
+        private const val MAX_SIZE = 50
     }
 
     init {
