@@ -61,7 +61,7 @@ class UniqueGroupMembersTest : DescribeSpec({
         context("正常系") {
             it("メンバーが未登録のインスタンスを生成する") {
                 // act
-                val result = GroupUniqueMembers.empty()
+                val result = UniqueGroupMembers.empty()
                 // assert
                 result.isEmpty().shouldBe(true)
             }
@@ -73,7 +73,7 @@ class UniqueGroupMembersTest : DescribeSpec({
             it("未登録のIDが入力されたら、入力されたIDを追加したインスタンスを生成する") {
                 // arrange
                 val id = RecipientId.createRandom()
-                val members = GroupUniqueMembers.empty()
+                val members = UniqueGroupMembers.empty()
                 // act
                 val result = members.add(id)
                 //  assert
@@ -83,7 +83,7 @@ class UniqueGroupMembersTest : DescribeSpec({
             it("登録済みのIDが入力されたら、入力されたIDをただ１つ含んだインスタンスを生成する") {
                 // arrange
                 val id = RecipientId.createRandom()
-                val members = GroupUniqueMembers(setOf(id))
+                val members = UniqueGroupMembers(setOf(id))
                 // act
                 val result = members.add(id)
                 // assert
@@ -98,7 +98,7 @@ class UniqueGroupMembersTest : DescribeSpec({
             it("登録済みのIDが入力されたら、入力されたIDを削除したインスタンスを生成する") {
                 // arrange
                 val id = RecipientId.createRandom()
-                val members = GroupUniqueMembers(setOf(id))
+                val members = UniqueGroupMembers(setOf(id))
                 // act
                 val result = members.delete(id)
                 // assert
@@ -109,7 +109,7 @@ class UniqueGroupMembersTest : DescribeSpec({
             it("未登録のIDが入力されたら、入力されたIDを含まないインスタンスを生成する") {
                 // arrange
                 val id = RecipientId.createRandom()
-                val members = GroupUniqueMembers.empty()
+                val members = UniqueGroupMembers.empty()
                 // act
                 val result = members.delete(id)
                 // assert
@@ -119,7 +119,7 @@ class UniqueGroupMembersTest : DescribeSpec({
             it("入力されたID以外は削除されない") {
                 // arrange
                 val id = RecipientId.createRandom()
-                val members = GroupUniqueMembers(setOf(id))
+                val members = UniqueGroupMembers(setOf(id))
                 // act
                 val result = members.delete(RecipientId.createRandom())
                 // assert
@@ -132,8 +132,8 @@ class UniqueGroupMembersTest : DescribeSpec({
         context("正常系") {
             it("自身が空の場合、入力されたインスタンスによらず空のインスタンスを返す") {
                 // arrange
-                val member = GroupUniqueMembers.empty()
-                val other = GroupUniqueMembers(setOf(RecipientId.createRandom()))
+                val member = UniqueGroupMembers.empty()
+                val other = UniqueGroupMembers(setOf(RecipientId.createRandom()))
                 // act
                 val result = member.subtract(other)
                 // assert
@@ -145,8 +145,8 @@ class UniqueGroupMembersTest : DescribeSpec({
                 val id0 = RecipientId.createRandom()
                 val id1 = RecipientId.createRandom()
                 val id2 = RecipientId.createRandom()
-                val member = GroupUniqueMembers(setOf(id0, id1, id2))
-                val other = GroupUniqueMembers(setOf(id2, RecipientId.createRandom()))
+                val member = UniqueGroupMembers(setOf(id0, id1, id2))
+                val other = UniqueGroupMembers(setOf(id2, RecipientId.createRandom()))
                 // act
                 val result = member.subtract(other)
                 // assert

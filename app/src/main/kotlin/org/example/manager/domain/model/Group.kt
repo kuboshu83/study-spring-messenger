@@ -34,10 +34,10 @@ data class GroupName(val value: String) {
     }
 }
 
-class GroupUniqueMembers(val members: Set<RecipientId>) {
+class UniqueGroupMembers(val members: Set<RecipientId>) {
     companion object {
-        fun empty(): GroupUniqueMembers {
-            return GroupUniqueMembers(emptySet())
+        fun empty(): UniqueGroupMembers {
+            return UniqueGroupMembers(emptySet())
         }
     }
 
@@ -55,16 +55,16 @@ class GroupUniqueMembers(val members: Set<RecipientId>) {
         return members.contains(recipientId)
     }
 
-    fun add(recipientId: RecipientId): GroupUniqueMembers {
-        return GroupUniqueMembers(members + recipientId)
+    fun add(recipientId: RecipientId): UniqueGroupMembers {
+        return UniqueGroupMembers(members + recipientId)
     }
 
-    fun delete(recipientId: RecipientId): GroupUniqueMembers {
-        return GroupUniqueMembers(members - recipientId)
+    fun delete(recipientId: RecipientId): UniqueGroupMembers {
+        return UniqueGroupMembers(members - recipientId)
     }
 
-    fun subtract(other: GroupUniqueMembers): GroupUniqueMembers {
-        return GroupUniqueMembers(members - other.members)
+    fun subtract(other: UniqueGroupMembers): UniqueGroupMembers {
+        return UniqueGroupMembers(members - other.members)
     }
 }
 
@@ -88,17 +88,17 @@ class Group(
     val id: GroupId,
     val name: GroupName,
     val locked: Boolean,
-    val members: GroupUniqueMembers,
+    val members: UniqueGroupMembers,
     val description: GroupDescription
 ) {
     companion object {
         fun create(name: GroupName, description: GroupDescription): Group {
-            return Group(GroupId.createRandom(), name, false, GroupUniqueMembers.empty(), description)
+            return Group(GroupId.createRandom(), name, false, UniqueGroupMembers.empty(), description)
         }
     }
 
     constructor(id: GroupId, name: GroupName, locked: Boolean, description: GroupDescription)
-            : this(id, name, locked, GroupUniqueMembers.empty(), description)
+            : this(id, name, locked, UniqueGroupMembers.empty(), description)
 
     fun isEmpty(): Boolean {
         return members.isEmpty()
