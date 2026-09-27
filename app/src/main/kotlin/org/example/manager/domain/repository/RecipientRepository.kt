@@ -3,6 +3,9 @@ package org.example.manager.domain.repository
 import org.example.manager.domain.model.*
 
 interface RecipientCommand {
+    /*
+    重複するデータが入力されたらDuplicateRecipientExceptionをThrowする。
+     */
     fun save(recipient: Recipient)
     fun update(recipient: Recipient)
     fun deleteByRecipientId(recipientId: RecipientId)

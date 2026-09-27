@@ -1,23 +1,37 @@
 package org.example.manager.infrastructure.repository
 
 import org.apache.ibatis.annotations.Mapper
+import org.example.manager.domain.errors.DataNotFoundException
+import org.example.manager.domain.errors.DuplicateDataException
 import org.example.manager.domain.model.*
 import org.example.manager.domain.repository.RecipientCommand
 import org.example.manager.domain.repository.RecipientQuery
+import org.springframework.dao.DuplicateKeyException
 import org.springframework.stereotype.Component
 
 @Component
 class RecipientCommandImpl(private val recipientCommandDAO: RecipientCommandDAO) : RecipientCommand {
     override fun save(recipient: Recipient) {
-        recipientCommandDAO.save(RecipientDTO.fromRecipient(recipient))
+        try {
+            recipientCommandDAO.save(RecipientDTO.fromRecipient(recipient))
+        } catch (ex: DuplicateKeyException) {
+            throw DuplicateDataException("email is already used", ex)
+        }
     }
 
     override fun update(recipient: Recipient) {
-        recipientCommandDAO.update(RecipientDTO.fromRecipient(recipient))
+        when (val count = recipientCommandDAO.update(RecipientDTO.fromRecipient(recipient))) {
+            0 -> throw DataNotFoundException("recipient not found: name=${recipient.name.value}")
+            1 -> return
+            else -> error("expected to update exactly 1 record, but updated multiple records: count=$count")
+        }
     }
 
     override fun deleteByRecipientId(recipientId: RecipientId) {
-        recipientCommandDAO.deleteByRecipientId(recipientId.value)
+        val count = recipientCommandDAO.deleteByRecipientId(recipientId.value)
+        if (count > 1) {
+            error("expected to delete 0 or 1 record, but deleted multiple records: count=$count")
+        }
     }
 }
 
@@ -79,6 +93,6 @@ interface RecipientQueryDAO {
 @Mapper
 interface RecipientCommandDAO {
     fun save(recipient: RecipientDTO)
-    fun update(recipient: RecipientDTO)
-    fun deleteByRecipientId(recipientId: String)
+    fun update(recipient: RecipientDTO): Int
+    fun deleteByRecipientId(recipientId: String): Int
 }

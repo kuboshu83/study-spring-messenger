@@ -2,6 +2,7 @@ package org.example.manager.domain.service
 
 import org.example.manager.domain.errors.DataConflictedException
 import org.example.manager.domain.errors.DataNotFoundException
+import org.example.manager.domain.errors.DuplicateDataException
 import org.example.manager.domain.model.*
 import org.example.manager.domain.repository.RecipientCommand
 import org.example.manager.domain.repository.RecipientQuery
@@ -42,7 +43,7 @@ class RecipientCreateService(
 ) {
     fun create(name: RecipientName, email: RecipientEmailAddress): RecipientId {
         if (recipientQuery.findByEmail(email) != null) {
-            throw DataConflictedException("specified email address is already used: address=${email.value}")
+            throw DuplicateDataException("email is already used")
         }
 
         val recipient = Recipient.create(name, email)

@@ -62,6 +62,7 @@ dependencies {
     // Testcontainers
     testImplementation("org.springframework.boot:spring-boot-testcontainers")
     testImplementation("org.testcontainers:testcontainers-junit-jupiter")
+    testImplementation("org.testcontainers:testcontainers-postgresql:2.0.5")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
