@@ -248,5 +248,30 @@ class RecipientQueryImplTest(
                 }
             }
         }
+
+        describe("fuzzyFindRecipientsByRecipientName") {
+            context("正常系") {
+                it("入力された名前を一部にもつ全データのリストを返す") {
+                    // arrange
+                    command.save(akira)
+                    command.save(alice)
+                    command.save(akari)
+                    // act
+                    val results = query.fuzzyFindRecipientsByRecipientName(RecipientName("ak"))
+                    // assert
+                    with(results) {
+                        shouldHaveSize(2)
+                        map { it.name.value }.sorted() shouldBe listOf(akira.name.value, akari.name.value).sorted()
+                    }
+                }
+
+                it("入力された名前を一部にもつデータがなければ空のリストを返す") {
+                    // act
+                    val results = query.fuzzyFindRecipientsByRecipientName(RecipientName("ak"))
+                    // assert
+                    results.shouldBeEmpty()
+                }
+            }
+        }
     }
 }
