@@ -39,7 +39,7 @@ class TestContainerConfiguration {
 @Testcontainers
 @Import(TestContainerConfiguration::class)
 @Transactional
-class RecipientRepositoryImplTest(
+class RecipientCommandImplTest(
     private val command: RecipientCommandImpl,
     private val template: JdbcTemplate
 ) : DescribeSpec() {
