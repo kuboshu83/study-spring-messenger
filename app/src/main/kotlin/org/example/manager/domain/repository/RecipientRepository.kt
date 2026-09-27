@@ -7,6 +7,10 @@ interface RecipientCommand {
     重複するデータが入力されたらDuplicateRecipientExceptionをThrowする。
      */
     fun save(recipient: Recipient)
+
+    /*
+    存在しないデータが入力されたらDataNotFoundExceptionをThrowする。
+     */
     fun update(recipient: Recipient)
     fun deleteByRecipientId(recipientId: RecipientId)
 }
