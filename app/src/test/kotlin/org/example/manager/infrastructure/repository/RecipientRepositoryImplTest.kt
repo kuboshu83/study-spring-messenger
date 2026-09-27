@@ -12,9 +12,7 @@ import io.kotest.matchers.shouldBe
 import org.example.config.TestContainerConfiguration
 import org.example.manager.domain.errors.DataNotFoundException
 import org.example.manager.domain.errors.DuplicateDataException
-import org.example.manager.domain.model.Recipient
-import org.example.manager.domain.model.RecipientEmailAddress
-import org.example.manager.domain.model.RecipientName
+import org.example.manager.domain.model.*
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
 import org.springframework.jdbc.core.JdbcTemplate
@@ -270,6 +268,51 @@ class RecipientQueryImplTest(
                     val results = query.fuzzyFindRecipientsByRecipientName(RecipientName("ak"))
                     // assert
                     results.shouldBeEmpty()
+                }
+            }
+        }
+
+        describe("findRecipientsByApplicationId") {
+            context("正常系") {
+                it("入力されたアプリケーションに登録されている全データのリストを返す") {
+                    // arrange
+                    command.save(akira)
+                    command.save(alice)
+                    val applicationId = ApplicationId.createRandom()
+                    val groupId = GroupId.createRandom()
+                    template.update(
+                        "INSERT INTO applications (id, name, locked, description) VALUES (CAST(? AS uuid),?,?,?)",
+                        applicationId.value,
+                        "application",
+                        false,
+                        "test application",
+                    )
+                    template.update(
+                        "INSERT INTO groups (id, name, locked, description) VALUES (CAST(? AS uuid),?,?,?)",
+                        groupId.value,
+                        "group",
+                        false,
+                        "test group",
+                    )
+                    template.update(
+                        "INSERT INTO applications_groups (application_id, group_id) VALUES (CAST(? AS uuid), CAST(? AS uuid))",
+                        applicationId.value,
+                        groupId.value,
+                    )
+                    template.update(
+                        "INSERT INTO recipients_groups (recipient_id, group_id) VALUES (CAST(? AS uuid),CAST(? AS uuid))",
+                        akira.id.value,
+                        groupId.value,
+                    )
+                    template.update(
+                        "INSERT INTO recipients_groups (recipient_id, group_id) VALUES (CAST(? AS uuid),CAST(? AS uuid))",
+                        alice.id.value,
+                        groupId.value,
+                    )
+                    // act
+                    val results = query.findRecipientsByApplicationId(applicationId)
+                    // assert
+                    results shouldHaveSize 2
                 }
             }
         }
