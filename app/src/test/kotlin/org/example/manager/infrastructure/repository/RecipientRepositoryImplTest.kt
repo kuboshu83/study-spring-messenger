@@ -6,33 +6,18 @@ import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.extensions.spring.SpringExtension
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
+import org.example.config.TestContainerConfiguration
 import org.example.manager.domain.errors.DataNotFoundException
 import org.example.manager.domain.errors.DuplicateDataException
 import org.example.manager.domain.model.Recipient
 import org.example.manager.domain.model.RecipientEmailAddress
 import org.example.manager.domain.model.RecipientName
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.context.TestConfiguration
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection
-import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Import
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.transaction.annotation.Transactional
 import org.testcontainers.junit.jupiter.Testcontainers
-import org.testcontainers.postgresql.PostgreSQLContainer
 
-@TestConfiguration(proxyBeanMethods = false)
-class TestContainerConfiguration {
-    @Bean
-    @ServiceConnection
-    fun postgresContainer(): PostgreSQLContainer {
-        return PostgreSQLContainer("postgres:18.3").apply {
-            withUsername("postgres")
-            withPassword("postgres")
-            withDatabaseName("testdb")
-        }
-    }
-}
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @ApplyExtension(SpringExtension::class)
