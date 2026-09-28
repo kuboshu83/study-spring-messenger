@@ -3,7 +3,15 @@ package org.example.manager.domain.repository
 import org.example.manager.domain.model.*
 
 interface RecipientCommand {
+    /*
+    重複するデータが入力されたらDuplicateDataExceptionをThrowする。
+     */
     fun save(recipient: Recipient)
+
+    /*
+    - 存在しないデータが入力されたらDataNotFoundExceptionをThrowする。
+    - 重複するデータが使用されたらDuplicateDataExceptionをThrowする。
+     */
     fun update(recipient: Recipient)
     fun deleteByRecipientId(recipientId: RecipientId)
 }

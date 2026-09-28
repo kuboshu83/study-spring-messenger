@@ -13,7 +13,21 @@ interface GroupQuery {
 }
 
 interface GroupCommand {
+    /*
+    例外:
+    DataNotFoundException:
+        - 未登録の受信者をメンバーとして所有するグループが入力された場合。
+    DuplicateDataException:
+        - 登録済みのグループ名のグループが入力された場合。
+     */
     fun save(group: Group)
     fun deleteByGroupId(groupId: GroupId)
+
+    /*
+    例外:
+    DataNotFoundException:
+        - 未登録のグループが入力された場合。
+        - 未登録の受信者をメンバーとして所有するグループが入力された場合。
+     */
     fun update(group: Group)
 }

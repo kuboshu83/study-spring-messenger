@@ -1,9 +1,13 @@
 package org.example.manager.infrastructure.repository
 
 import org.apache.ibatis.annotations.Mapper
+import org.example.manager.domain.errors.DataNotFoundException
+import org.example.manager.domain.errors.DuplicateDataException
 import org.example.manager.domain.model.*
 import org.example.manager.domain.repository.GroupCommand
 import org.example.manager.domain.repository.GroupQuery
+import org.springframework.dao.DataIntegrityViolationException
+import org.springframework.dao.DuplicateKeyException
 import org.springframework.stereotype.Component
 
 @Component
@@ -55,11 +59,24 @@ class GroupCommandImpl(
 ) : GroupCommand {
     override fun save(group: Group) {
         val groupDTO = GroupDtoCollection.fromGroup(group).toList().first()
-        groupCommandDAO.save(groupDTO)
+        try {
+            groupCommandDAO.save(groupDTO)
+        } catch (ex: DuplicateKeyException) {
+            throw DuplicateDataException("group name already used", ex)
+        }
 
         val memberships = GroupMembershipDtoCollection.fromGroup(group).toList()
         if (memberships.isNotEmpty()) {
-            groupMembershipCommandDAO.save(memberships)
+            try {
+                groupMembershipCommandDAO.save(memberships)
+            } catch (ex: DataIntegrityViolationException) {
+                val dataNotFound = ex.message
+                    ?.contains("recipients_groups_recipient_id_fkey")
+                    ?: false
+                if (dataNotFound) {
+                    throw DataNotFoundException("cannot find recipient")
+                }
+            }
         }
     }
 
@@ -68,6 +85,9 @@ class GroupCommandImpl(
     }
 
     override fun update(group: Group) {
+        if (groupQueryDAO.findGroupByGroupId(group.id.value).isEmpty()) {
+            throw DataNotFoundException("group not exists")
+        }
 
         val groupDTO = GroupDtoCollection.fromGroup(group).toList().first()
         groupCommandDAO.update(groupDTO)
@@ -90,7 +110,16 @@ class GroupCommandImpl(
         }
         val newMemberships = newMembers.members.map { member -> GroupMemberShipDTO(member, group.id) }
         if (newMemberships.isNotEmpty()) {
-            groupMembershipCommandDAO.save(newMemberships)
+            try {
+                groupMembershipCommandDAO.save(newMemberships)
+            } catch (ex: DataIntegrityViolationException) {
+                val dataNotFound = ex.message
+                    ?.contains("recipients_groups_recipient_id_fkey")
+                    ?: false
+                if (dataNotFound) {
+                    throw DataNotFoundException("cannot find recipient")
+                }
+            }
         }
     }
 }

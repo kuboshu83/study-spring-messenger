@@ -70,4 +70,20 @@ class Recipient(
             return Recipient(RecipientId.createRandom(), name, email, false)
         }
     }
+
+    fun withName(name: RecipientName): Recipient {
+        return Recipient(id, name, email, locked)
+    }
+
+    fun withEmail(email: RecipientEmailAddress): Recipient {
+        return Recipient(id, name, email, locked)
+    }
+
+    fun withLocked(): Recipient {
+        return Recipient(id, name, email, true)
+    }
+
+    fun withUnlocked(): Recipient {
+        return Recipient(id, name, email, false)
+    }
 }
