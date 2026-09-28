@@ -302,5 +302,30 @@ class GroupQueryImplTest(
                 }
             }
         }
+
+        describe("findGroupsByGroupIds") {
+            context("正常系") {
+                it("検索データが見つかったらそのデータのリストを返す") {
+                    // arrange
+                    groupCommand.save(group01)
+                    groupCommand.save(group02)
+                    // act
+                    val result = groupQuery.findGroupsByGroupIds(setOf(group01.id, group02.id, group10.id))
+                    // assert
+                    with(result.sortedBy { it.name.value }) {
+                        shouldHaveSize(2)
+                        get(0) shouldBeEqualToComparingFields group01
+                        get(1) shouldBeEqualToComparingFields group02
+                    }
+                }
+
+                it("検索データが見つからない場合は空のリストを返す") {
+                    // act
+                    val result = groupQuery.findGroupsByGroupIds(setOf(group01.id, group02.id, group10.id))
+                    // assert
+                    result.shouldBeEmpty()
+                }
+            }
+        }
     }
 }
