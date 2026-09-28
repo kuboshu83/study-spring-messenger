@@ -31,6 +31,7 @@ class RecipientCommandImplTest(
 ) : DescribeSpec() {
     companion object {
         private val akira = Recipient.create(RecipientName("akira"), RecipientEmailAddress.of("akira@example.com"))
+        private val alice = Recipient.create(RecipientName("alice"), RecipientEmailAddress.of("alice@example.com"))
     }
 
     init {
@@ -90,6 +91,16 @@ class RecipientCommandImplTest(
                     // act, assert
                     shouldThrow<DataNotFoundException> {
                         command.update(akira)
+                    }
+                }
+
+                it("他で使用済みのEmailが使用されたらDuplicateDataExceptionをThrowする") {
+                    // arrange
+                    command.save(akira)
+                    command.save(alice)
+                    // assert
+                    shouldThrow<DuplicateDataException> {
+                        command.update(akira.withEmail(alice.email))
                     }
                 }
             }

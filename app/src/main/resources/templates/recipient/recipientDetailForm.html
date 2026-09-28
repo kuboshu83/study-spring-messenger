@@ -7,20 +7,80 @@
 <body>
 <div><a th:href="@{/recipients}">受信者トップページ</a></div>
 <h1>受信者情報</h1>
-<form method="post" th:action="@{/recipients/{id}/update(id=${recipient.id.value})}">
-    <label for="name">名前:</label>
-    <input type="text" id="name" name="name" th:value="${recipient.name.value}"/>
+<form id="update-recipient-form">
+    <div>
+        <label for="name">名前:</label>
+        <input type="text" id="name" name="name"/>
+    </div>
 
-    <label for="email">メールアドレス:</label>
-    <input type="text" id="email" name="email" th:value="${recipient.email.value}"/>
+    <div>
+        <label for="email">メールアドレス:</label>
+        <input type="text" id="email" name="email"/>
+    </div>
 
-    <label>ロック状況:</label>
-    <input type="radio" id="locked-true" name="locked" value="true" th:checked="${recipient.locked}">
-    <label for="locked-true">locked</label>
-    <input type="radio" id="locked-false" name="locked" value="false" th:checked="${!recipient.locked}">
-    <label for="locked-false">unlocked</label>
+    <div>
+        <label>ロック状況:</label>
+        <input type="radio" id="locked-true" name="locked" value="true">
+        <label for="locked-true">locked</label>
+        <input type="radio" id="locked-false" name="locked" value="false">
+        <label for="locked-false">unlocked</label>
+    </div>
 
     <input type="submit" value="更新">
 </form>
+<div id="status"></div>
+
+
+<script th:inline="javascript">
+    (() => {
+        const apiBaseUrl = /*[[@{/api/v1/recipients}]]*/'';
+        const baseUrl = /*[[@{/recipients}]]*/'';
+        const id = window.location.pathname.split('/').filter(Boolean).pop();
+
+        const form = document.getElementById("update-recipient-form");
+        form.addEventListener("submit", event => {
+            event.preventDefault();
+            update();
+        });
+
+        initialize();
+
+        async function initialize() {
+            const response = await fetch(`${apiBaseUrl}/${id}`);
+            const recipient = await response.json();
+            document.getElementById("name").value = recipient.name;
+            document.getElementById("email").value = recipient.email;
+            document.getElementById("locked-false").checked = !recipient.locked;
+            document.getElementById("locked-true").checked = recipient.locked;
+        }
+
+        async function update() {
+            const formData = new FormData(form);
+            const name = formData.get("name");
+            const email = formData.get("email");
+            const locked = formData.get("locked");
+
+            const response = await fetch(`${apiBaseUrl}/${id}`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    name: name,
+                    email: email,
+                    locked: locked,
+                })
+            });
+            const status = document.getElementById("status");
+            if (response.ok) {
+                await initialize();
+                status.textContent = "更新しました";
+            } else {
+                const error = await response.json();
+                status.textContent = error.error;
+            }
+        }
+    })();
+</script>
 </body>
 </html>

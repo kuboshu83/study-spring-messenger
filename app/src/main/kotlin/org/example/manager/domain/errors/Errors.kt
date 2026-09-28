@@ -9,3 +9,7 @@ class DuplicateDataException(message: String, cause: Throwable? = null) : Busine
 class DataNotFoundException(message: String, cause: Throwable? = null) : BusinessException(message, cause)
 
 class DataConflictedException(message: String, cause: Throwable? = null) : RuntimeException(message, cause)
+
+class InvalidRequestDataException(message: String, cause: Throwable? = null) : RuntimeException(message, cause)
+
+class DataCorruptionException(message: String, cause: Throwable? = null) : RuntimeException(message, cause)

@@ -1,6 +1,7 @@
 package org.example.manager.infrastructure.repository
 
 import org.apache.ibatis.annotations.Mapper
+import org.example.manager.domain.errors.DataCorruptionException
 import org.example.manager.domain.errors.DataNotFoundException
 import org.example.manager.domain.errors.DuplicateDataException
 import org.example.manager.domain.model.*
@@ -20,9 +21,15 @@ class RecipientCommandImpl(private val recipientCommandDAO: RecipientCommandDAO)
     }
 
     override fun update(recipient: Recipient) {
-        when (val count = recipientCommandDAO.update(RecipientDTO.fromRecipient(recipient))) {
+        val count = try {
+            recipientCommandDAO.update(RecipientDTO.fromRecipient(recipient))
+        } catch (ex: DuplicateKeyException) {
+            throw DuplicateDataException("email is already used", ex)
+        }
+        when (count) {
             0 -> throw DataNotFoundException("recipient not found: name=${recipient.name.value}")
             1 -> return
+            // emailのカラムにUnique制約を設けているので、ここには到達しないはず。到達したら制約が壊れている。
             else -> error("expected to update exactly 1 record, but updated multiple records: count=$count")
         }
     }
@@ -30,6 +37,7 @@ class RecipientCommandImpl(private val recipientCommandDAO: RecipientCommandDAO)
     override fun deleteByRecipientId(recipientId: RecipientId) {
         val count = recipientCommandDAO.deleteByRecipientId(recipientId.value)
         if (count > 1) {
+            // 主キーなのでここには到達しないはず。ただバグなどで到達した場合の影響が甚大なので安全策で入れている。
             error("expected to delete 0 or 1 record, but deleted multiple records: count=$count")
         }
     }
@@ -71,12 +79,16 @@ data class RecipientDTO(val id: String, val name: String, val email: String, val
     }
 
     fun toRecipient(): Recipient {
-        return Recipient(
-            RecipientId.fromString(id),
-            RecipientName(name),
-            RecipientEmailAddress.of(email),
-            locked
-        )
+        try {
+            return Recipient(
+                RecipientId.fromString(id),
+                RecipientName(name),
+                RecipientEmailAddress.of(email),
+                locked
+            )
+        } catch (ex: IllegalArgumentException) {
+            throw DataCorruptionException("data corruption detected: id=$id, name=$name, email=$email")
+        }
     }
 }
 

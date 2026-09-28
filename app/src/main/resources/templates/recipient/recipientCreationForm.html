@@ -7,7 +7,7 @@
 <body>
 <div><a th:href="@{/recipients}">受信者トップページ</a></div>
 <h1>受信者登録</h1>
-<form method="post" th:action="@{/recipients/create}">
+<form id="create-recipient-form">
     <label for="name">名前:</label>
     <input id="name" name="name" type="text"/><br>
 
@@ -16,5 +16,41 @@
 
     <input type="submit" value="登録">
 </form>
+
+
+<script th:inline="javascript">
+    (() => {
+        const apiBaseUrl = /*[[@{/api/v1/recipients}]]*/'';
+        const baseUrl = /*[[@{/recipients}]]*/'';
+
+        const form = document.getElementById("create-recipient-form");
+        form.addEventListener("submit", event => {
+            event.preventDefault();
+            createRecipient();
+        });
+
+        async function createRecipient() {
+            const formData = new FormData(form);
+            const name = formData.get("name");
+            const email = formData.get("email");
+            const response = await fetch(apiBaseUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    name: name,
+                    email: email,
+                })
+            });
+            if (response.status !== 201) {
+                throw Error(`create recipient failed: status=${response.status}`);
+            }
+            const recipient = await response.json();
+            window.location.href = `${baseUrl}/${recipient.id}`;
+        }
+    })();
+
+</script>
 </body>
 </html>

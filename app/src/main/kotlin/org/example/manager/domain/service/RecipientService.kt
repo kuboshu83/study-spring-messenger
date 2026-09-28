@@ -1,12 +1,12 @@
 package org.example.manager.domain.service
 
-import org.example.manager.domain.errors.DataConflictedException
 import org.example.manager.domain.errors.DataNotFoundException
 import org.example.manager.domain.errors.DuplicateDataException
 import org.example.manager.domain.model.*
 import org.example.manager.domain.repository.RecipientCommand
 import org.example.manager.domain.repository.RecipientQuery
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class RecipientSearchService(private val recipientQuery: RecipientQuery) {
@@ -14,10 +14,8 @@ class RecipientSearchService(private val recipientQuery: RecipientQuery) {
         return recipientQuery.findAll()
     }
 
-    fun findByRecipientId(recipientId: RecipientId): Recipient {
-        val recipient = recipientQuery.findByRecipientId(recipientId)
-            ?: throw DataNotFoundException("specified recipient not found: id=${recipientId.value}")
-        return recipient
+    fun findByRecipientId(recipientId: RecipientId): Recipient? {
+        return recipientQuery.findByRecipientId(recipientId)
     }
 
     fun findRecipientsByRecipientIds(recipientIds: Set<RecipientId>): List<Recipient> {
@@ -41,6 +39,7 @@ class RecipientCreateService(
     private val recipientCommand: RecipientCommand,
     private val recipientQuery: RecipientQuery
 ) {
+    @Transactional
     fun create(name: RecipientName, email: RecipientEmailAddress): RecipientId {
         if (recipientQuery.findByEmail(email) != null) {
             throw DuplicateDataException("email is already used")
@@ -57,6 +56,7 @@ class RecipientUpdateService(
     private val recipientCommand: RecipientCommand,
     private val recipientQuery: RecipientQuery
 ) {
+    @Transactional
     fun update(recipient: Recipient) {
         if (recipientQuery.findByRecipientId(recipient.id) == null) {
             throw DataNotFoundException("specified recipient not found: id=${recipient.id.value} ")
@@ -64,7 +64,7 @@ class RecipientUpdateService(
 
         val foundRecipient = recipientQuery.findByEmail(recipient.email)
         if (foundRecipient != null && foundRecipient.id != recipient.id) {
-            throw DataConflictedException("specified email address is already used: address=${recipient.email.value}")
+            throw DuplicateDataException("email is already used: address=${recipient.email.value}")
         }
 
         recipientCommand.update(recipient)
@@ -73,6 +73,7 @@ class RecipientUpdateService(
 
 @Service
 class RecipientDeleteService(private val recipientCommand: RecipientCommand) {
+    @Transactional
     fun deleteByRecipientId(recipientId: RecipientId) {
         recipientCommand.deleteByRecipientId(recipientId)
     }
