@@ -114,4 +114,20 @@ class Group(
         val updatedMembers = members.add(recipientId)
         return Group(id, name, locked, updatedMembers, description)
     }
+
+    fun withName(name: GroupName): Group {
+        return Group(id, name, locked, members, description)
+    }
+
+    fun withLocked(): Group {
+        return Group(id, name, true, members, description)
+    }
+
+    fun withUnlocked(): Group {
+        return Group(id, name, false, members, description)
+    }
+
+    fun withDescription(description: GroupDescription): Group {
+        return Group(id, name, locked, members, description)
+    }
 }
