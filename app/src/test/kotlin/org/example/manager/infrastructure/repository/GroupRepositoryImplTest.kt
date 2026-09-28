@@ -4,7 +4,11 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.extensions.ApplyExtension
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.extensions.spring.SpringExtension
+import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.equality.shouldBeEqualToComparingFields
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import org.example.config.TestContainerConfiguration
 import org.example.manager.domain.errors.DataNotFoundException
@@ -183,6 +187,118 @@ class GroupCommandImplNormalTest(
                         groupCommand.update(group01.addMember(akira.id))
                     }
                     println(error)
+                }
+            }
+        }
+    }
+}
+
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@ApplyExtension(SpringExtension::class)
+@Testcontainers
+@Import(TestContainerConfiguration::class)
+@Transactional
+class GroupQueryImplTest(
+    private val groupCommand: GroupCommandImpl,
+    private val groupQuery: GroupQueryImpl,
+    private val template: JdbcTemplate,
+) : DescribeSpec() {
+    companion object {
+        private val group01 = Group.create(GroupName("group01"), GroupDescription.of("test group01"))
+        private val group02 = Group.create(GroupName("group02"), GroupDescription.of("test group02"))
+        private val group10 = Group.create(GroupName("group10"), GroupDescription.of("test group10"))
+    }
+
+    init {
+        describe("findAll") {
+            context("正常系") {
+                it("登録されている全グループのリストを返す") {
+                    // arrange
+                    groupCommand.save(group01)
+                    groupCommand.save(group02)
+                    // act
+                    val result = groupQuery.findAll()
+                    // assert
+                    with(result.sortedBy { it.name.value }) {
+                        shouldHaveSize(2)
+                        get(0) shouldBeEqualToComparingFields group01
+                        get(1) shouldBeEqualToComparingFields group02
+                    }
+                }
+
+                it("登録データがなければ空のリストを返す") {
+                    // act
+                    val result = groupQuery.findAll()
+                    // assert
+                    result.shouldBeEmpty()
+                }
+            }
+        }
+
+        describe("findByGroupName") {
+            context("正常系") {
+                it("検索データが見つかればそれを返す") {
+                    // arrange
+                    groupCommand.save(group01)
+                    // act
+                    val result = groupQuery.findByGroupName(group01.name)
+                    // assert
+                    result.shouldNotBeNull()
+                    result shouldBeEqualToComparingFields group01
+                }
+
+                it("検索データが見つからなければnullを返す") {
+                    // act
+                    val result = groupQuery.findByGroupName(group01.name)
+                    // assert
+                    result.shouldBeNull()
+                }
+            }
+        }
+
+        describe("findByGroupId") {
+            context("正常系") {
+                it("検索データが見つかればそのデータを返す") {
+                    // arrange
+                    groupCommand.save(group01)
+                    // act
+                    val result = groupQuery.findByGroupId(group01.id)
+                    // assert
+                    result.shouldNotBeNull()
+                    result shouldBeEqualToComparingFields group01
+                }
+
+                it("検索データが見つからなければnullを返す") {
+                    // act
+                    val result = groupQuery.findByGroupId(group01.id)
+                    // assert
+                    result.shouldBeNull()
+                }
+            }
+        }
+
+        describe("fuzzyFindGroupsByGroupName") {
+            context("正常系") {
+                it("検索データが見つかればそのリストを返す") {
+                    // arrange
+                    groupCommand.save(group01)
+                    groupCommand.save(group02)
+                    groupCommand.save(group10)
+                    // act
+                    val result = groupQuery.fuzzyFindGroupsByGroupName(GroupName("group0"))
+                    // assert
+                    with(result.sortedBy { it.name.value }) {
+                        shouldHaveSize(2)
+                        get(0) shouldBeEqualToComparingFields group01
+                        get(1) shouldBeEqualToComparingFields group02
+                    }
+                }
+
+                it("検索データが見つからなければ空のリストを返す") {
+                    // act
+                    val result = groupQuery.fuzzyFindGroupsByGroupName(GroupName("group0"))
+                    // assert
+                    result.shouldBeEmpty()
                 }
             }
         }
