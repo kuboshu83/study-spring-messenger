@@ -42,6 +42,8 @@
 
 
 <script th:inline="javascript">
+    const baseRecipientApiUrl = /*[[@{/api/v1/recipients}]]*/'';
+
     const baseUrl = /*[[@{/api/recipients}]]*/'';
     const registeredRecipients = new Map((/*[[${registeredRecipients}]]*/[]).map(recipient => [recipient.id, recipient]));
     console.log(registeredRecipients);
@@ -54,28 +56,21 @@
 
     renderRegisteredRecipient();
 
-    function searchRecipient() {
-        const formData = new FormData(searchRecipientForm)
+    async function searchRecipient() {
+        const formData = new FormData(searchRecipientForm);
         const searchName = formData.get("searchName");
-        const url = searchName === "" ? baseUrl : `${baseUrl}?name=${searchName}`
-        fetch(url).then(res => {
-            if (res.ok) {
-                return res.json();
-            }
-            throw new Error(`search recipient error: ${res.status}`);
-        }).then(recipients => {
-            renderSearchRecipientResult(recipients);
-        }).catch(error => {
-            console.error(error);
-        });
-    }
+        const url = searchName === "" ? baseRecipientApiUrl : `${baseRecipientApiUrl}?name=${searchName}`;
+        const response = await fetch(url);
+        if (!response.ok) {
+            const error = await response.json();
+            console.error(error.error);
+        }
 
-    function renderSearchRecipientResult(recipients) {
+        const recipients = await response.json();
+
         const list = document.getElementById("search-recipient-results");
-        list.replaceChildren();
         recipients.forEach(recipient => {
             const li = document.createElement("li");
-
             const name = document.createElement("span");
             name.textContent = recipient.name;
 
@@ -91,7 +86,7 @@
 
             li.appendChild(name);
             li.appendChild(button);
-            list.appendChild(li);
+            list.append(li);
         });
     }
 
